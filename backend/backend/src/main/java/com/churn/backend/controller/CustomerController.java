@@ -1,8 +1,7 @@
-// Controller → Service → Repository → MySQL ✅
-
 package com.churn.backend.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,5 +30,11 @@ public class CustomerController {
     @GetMapping
     public List<Customer> getCustomers() {
         return service.getAllCustomers();
+    }
+
+    // NEW → Predict churn risk
+    @PostMapping("/predict")
+    public Map<String, Object> predict(@RequestBody Customer customer) {
+        return service.predictCustomer(customer);
     }
 }
