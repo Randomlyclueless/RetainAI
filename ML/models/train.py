@@ -24,6 +24,10 @@ from sklearn.metrics import (
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
 
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
 from features.feature_store import get_feature_matrix
 from models import (
     DEFAULT_LEARNING_RATE,

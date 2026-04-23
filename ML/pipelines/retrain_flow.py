@@ -11,6 +11,9 @@ import pandas as pd
 from prefect import flow, task
 from prefect.server.schemas.schedules import CronSchedule
 
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
 # Import our custom components
 from features import feature_store
 from models.ensemble import train_ensemble

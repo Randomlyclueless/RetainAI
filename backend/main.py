@@ -12,11 +12,15 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from features import feature_store
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ML'))
+
 try:
+    import features.feature_store as feature_store
     from monitoring.drift_detector import run_drift_check
     DRIFT_AVAILABLE = True
-except ImportError:
+except ImportError as e:
+    logger.warning(f"ML components not found in path: {e}")
     DRIFT_AVAILABLE = False
 
 # Setup logging
@@ -180,7 +184,7 @@ async def model_health():
 @app.get("/model-comparison")
 async def model_comparison():
     # Attempt to retrieve local comparison metrics
-    metadata_path = "data/metadata/model_comparison.json"
+    metadata_path = os.path.join(os.path.dirname(__file__), "..", "ML", "data", "metadata", "model_comparison.json")
     if os.path.exists(metadata_path):
         with open(metadata_path, 'r') as f:
             return json.load(f)

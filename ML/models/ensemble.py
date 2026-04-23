@@ -14,6 +14,10 @@ import mlflow.xgboost
 import mlflow.lightgbm
 import mlflow.catboost
 import numpy as np
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
 import pandas as pd
 try:
     import shap
