@@ -16,16 +16,16 @@ import com.churn.backend.service.CustomerService;
 
 @RestController
 @RequestMapping("/customers")
-@CrossOrigin(origins = "http://localhost:3000") // ✅ ADD THIS
+@CrossOrigin(origins = "http://localhost:3000")
 public class CustomerController {
 
     @Autowired
     private CustomerService service;
 
-    // Add customer to DB
+    // Add customer manually
     @PostMapping
     public Customer addCustomer(@RequestBody Customer customer) {
-        return service.addCustomer(customer);
+        return service.saveCustomer(customer);
     }
 
     // Get all customers
@@ -34,9 +34,15 @@ public class CustomerController {
         return service.getAllCustomers();
     }
 
-    // 🔥 ML Prediction endpoint
+    // 🔥 ML Prediction
     @PostMapping("/ml-predict")
     public Map<String, Object> predictUsingML(@RequestBody Customer customer) {
         return service.getMLPrediction(customer);
+    }
+
+    // 🔥 NEW STATS API
+    @GetMapping("/stats")
+    public Map<String, Object> getStats() {
+        return service.getStats();
     }
 }

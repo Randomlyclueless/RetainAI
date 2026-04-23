@@ -19,6 +19,10 @@ public class Customer {
     private int internetService;
     private int paymentMethod;
 
+    // 🔥 NEW FIELDS (VERY IMPORTANT)
+    private Integer prediction;
+    private Double probability;
+
     public Customer() {}
 
     // Getters & Setters
@@ -73,5 +77,23 @@ public class Customer {
 
     public void setPaymentMethod(int paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    // 🔥 NEW GETTERS & SETTERS
+
+    public Integer getPrediction() {
+        return prediction;
+    }
+
+    public void setPrediction(Integer prediction) {
+        this.prediction = prediction;
+    }
+
+    public Double getProbability() {
+        return probability;
+    }
+
+    public void setProbability(Double probability) {
+        this.probability = probability;
     }
 }
