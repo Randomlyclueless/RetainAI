@@ -44,3 +44,4 @@ httpx>=0.26.0           # async test client for FastAPI
 # Utilities
 python-dotenv>=1.0.0
 joblib>=1.3.0
+matplotlib>=3.8.0

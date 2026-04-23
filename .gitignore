@@ -2,22 +2,33 @@
 __pycache__/
 *.py[cod]
 *$py.class
-.venv/
-env/
 venv/
-ENV/
-build/
-dist/
-*.egg-info/
+.venv/
+.env
 
-# MLOps / Data
+# MLflow / Tracking
+mlflow.db
 mlruns/
-data/processed/
+catboost_info/
+tensorboard/
 
-# IDE
+# Data & Artifacts
+data/processed/
+data/raw/
+*.csv
+*.png
+*.jpg
+*.jpeg
+*.html
+!monitoring/reports/*.html
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.wasm
+frontend/package-lock.json
+
+# IDEs
 .vscode/
 .idea/
 .DS_Store
-
-# Logs
-*.log

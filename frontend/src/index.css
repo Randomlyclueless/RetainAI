@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-gray-200 antialiased selection:bg-gold/30;
+    background: radial-gradient(circle at 50% 0%, #111 0%, #000 70%);
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, .hero-font {
+    font-family: 'DM Serif Display', serif;
+    @apply tracking-tight;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-2xl;
+  }
+
+  .glass-card {
+    @apply glass-panel p-8 transition-all duration-700 ease-out relative overflow-hidden;
+    @apply hover:border-gold/40 hover:shadow-[0_0_40px_rgba(212,175,55,0.05)];
+  }
+
+  .glass-card::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-700 bg-gradient-to-br from-gold/5 via-transparent to-transparent;
+  }
+
+  .glass-card:hover::before {
+    @apply opacity-100;
+  }
+
+  .btn-gold {
+    @apply bg-gold text-black px-10 py-4 rounded-full font-bold transition-all duration-300;
+    @apply hover:scale-105 hover:shadow-[0_0_30px_rgba(212,175,55,0.3)] active:scale-95;
+    box-shadow: 0 0 0 0 rgba(212,175,55,0);
+  }
+
+  .text-gold {
+    color: #D4AF37;
+    @apply drop-shadow-[0_2px_10px_rgba(212,175,55,0.2)];
+  }
+
+  .glow-aura {
+    @apply absolute rounded-full blur-[120px] opacity-20 pointer-events-none;
+    background: radial-gradient(circle, #D4AF37 0%, transparent 70%);
+  }
+}
