@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,26 +16,27 @@ import com.churn.backend.service.CustomerService;
 
 @RestController
 @RequestMapping("/customers")
+@CrossOrigin(origins = "http://localhost:3000") // ✅ ADD THIS
 public class CustomerController {
 
     @Autowired
     private CustomerService service;
 
-    // POST → Add customer to DB
+    // Add customer to DB
     @PostMapping
     public Customer addCustomer(@RequestBody Customer customer) {
         return service.addCustomer(customer);
     }
 
-    // GET → Fetch all customers from DB
+    // Get all customers
     @GetMapping
     public List<Customer> getCustomers() {
         return service.getAllCustomers();
     }
 
-    // NEW → Predict churn risk
-    @PostMapping("/predict")
-    public Map<String, Object> predict(@RequestBody Customer customer) {
-        return service.predictCustomer(customer);
+    // 🔥 ML Prediction endpoint
+    @PostMapping("/ml-predict")
+    public Map<String, Object> predictUsingML(@RequestBody Customer customer) {
+        return service.getMLPrediction(customer);
     }
 }

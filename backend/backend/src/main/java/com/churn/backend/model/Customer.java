@@ -12,56 +12,66 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private int loginFrequency;
-    private int daysSinceLastLogin;
-    private int supportTickets;
+    private int tenure;
+    private double monthlyCharges;
+    private double totalCharges;
+    private int contract;
+    private int internetService;
+    private int paymentMethod;
 
-    // Default constructor (VERY IMPORTANT for JPA)
     public Customer() {}
 
-    // Parameterized constructor
-    public Customer(String name, int loginFrequency, int daysSinceLastLogin, int supportTickets) {
-        this.name = name;
-        this.loginFrequency = loginFrequency;
-        this.daysSinceLastLogin = daysSinceLastLogin;
-        this.supportTickets = supportTickets;
-    }
-
     // Getters & Setters
+
     public Long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public int getTenure() {
+        return tenure;
     }
 
-    public int getLoginFrequency() {
-        return loginFrequency;
+    public void setTenure(int tenure) {
+        this.tenure = tenure;
     }
 
-    public int getDaysSinceLastLogin() {
-        return daysSinceLastLogin;
+    public double getMonthlyCharges() {
+        return monthlyCharges;
     }
 
-    public int getSupportTickets() {
-        return supportTickets;
+    public void setMonthlyCharges(double monthlyCharges) {
+        this.monthlyCharges = monthlyCharges;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public double getTotalCharges() {
+        return totalCharges;
     }
 
-    public void setLoginFrequency(int loginFrequency) {
-        this.loginFrequency = loginFrequency;
+    public void setTotalCharges(double totalCharges) {
+        this.totalCharges = totalCharges;
     }
 
-    public void setDaysSinceLastLogin(int daysSinceLastLogin) {
-        this.daysSinceLastLogin = daysSinceLastLogin;
+    public int getContract() {
+        return contract;
     }
 
-    public void setSupportTickets(int supportTickets) {
-        this.supportTickets = supportTickets;
+    public void setContract(int contract) {
+        this.contract = contract;
+    }
+
+    public int getInternetService() {
+        return internetService;
+    }
+
+    public void setInternetService(int internetService) {
+        this.internetService = internetService;
+    }
+
+    public int getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(int paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }
