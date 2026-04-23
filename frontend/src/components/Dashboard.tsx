@@ -12,25 +12,29 @@ import {
   ArrowUpRight, 
   ArrowDownRight,
   Filter,
-  Download
+  Download,
+  LogOut
 } from 'lucide-react';
+import { useAuth } from '../main';
 
 const API_BASE = 'http://localhost:8000';
 
-const Dashboard = () => {
+  const { token, logout, user } = useAuth();
   const [health, setHealth] = useState<any>(null);
 
   useEffect(() => {
     const fetchHealth = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/model-health`);
+        const res = await axios.get(`${API_BASE}/model-health`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
         setHealth(res.data);
       } catch (err) {
         console.error("Failed to fetch health", err);
       }
     };
-    fetchHealth();
-  }, []);
+    if (token) fetchHealth();
+  }, [token]);
 
   const chartData = [
     { name: 'Mon', churn: 42, active: 400 },
@@ -64,9 +68,12 @@ const Dashboard = () => {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-4xl font-serif mb-1">Executive Dashboard</h1>
-          <p className="text-gray-500">Monitoring {health?.predictions_today || '1.2k'} active prediction streams.</p>
+          <p className="text-gray-500">Welcome back, {user?.name || 'Executive'}. Monitoring {health?.predictions_today || '1.2k'} active prediction streams.</p>
         </div>
         <div className="flex gap-4">
+          <button onClick={logout} className="flex items-center gap-2 px-4 py-2 border border-white/10 rounded-lg text-gray-400 hover:text-danger hover:border-danger/30 transition-all text-sm">
+            <LogOut size={16} /> Logout
+          </button>
           <button className="flex items-center gap-2 px-4 py-2 glass-panel hover:bg-white/5 transition-colors text-sm">
             <Filter size={16} /> Filter Window
           </button>

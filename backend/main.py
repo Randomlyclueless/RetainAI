@@ -11,6 +11,8 @@ import mlflow.pyfunc
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from fastapi.security import OAuth2PasswordRequestForm
+from auth import verify_password, create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES
 
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ML'))
@@ -97,8 +99,25 @@ class PredictionResponse(BaseModel):
     timestamp: str
 
 # Endpoints
+@app.post("/login")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    from auth import USER_DB
+    user = USER_DB.get(form_data.username)
+    if not user or not verify_password(form_data.password, user["hashed_password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect luxury credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user["username"]}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer", "user": {"email": user["username"], "name": user["full_name"]}}
+
 @app.post("/predict", response_model=PredictionResponse)
-async def predict(request: PredictionRequest):
+async def predict(request: PredictionRequest, current_user: dict = Depends(get_current_user)):
     customer_id = request.customer_id
     
     # 1. Check Cache
@@ -163,7 +182,7 @@ async def predict(request: PredictionRequest):
         raise HTTPException(status_code=500, detail="Error during model inference")
 
 @app.get("/model-health")
-async def model_health():
+async def model_health(current_user: dict = Depends(get_current_user)):
     # Trigger drift detection summary
     if DRIFT_AVAILABLE:
         try:
