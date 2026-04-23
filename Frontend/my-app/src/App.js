@@ -1,8 +1,15 @@
 import React from "react";
 import Predict from "./pages/Predict";
+import Dashboard from "./Dashboard";
 
 function App() {
-  return <Predict />;
+  return (
+    <div>
+      <Predict />
+      <hr />
+      <Dashboard />
+    </div>
+  );
 }
 
 export default App;
