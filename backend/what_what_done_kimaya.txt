@@ -1,0 +1,116 @@
+PHASE 1: Project Setup
+✅ 1. Created Spring Boot Project
+Used Spring Boot with dependencies:
+Web
+JPA
+MySQL
+💡 What you learned:
+Spring Boot structure
+Maven project setup
+✅ 2. Understood Project Structure
+
+You organized code into:
+
+controller / service / repository / model
+💡 Why this matters:
+Clean code
+Industry standard architecture
+🧠 🟡 PHASE 2: Database Integration
+✅ 3. Setup MySQL using Terminal
+
+You did:
+
+CREATE DATABASE churn_db;
+💡 Learned:
+MySQL basics
+Terminal usage
+✅ 4. Connected Spring Boot to MySQL
+
+In application.properties:
+
+spring.datasource.url=jdbc:mysql://localhost:3306/churn_db
+spring.datasource.username=root
+spring.datasource.password=***
+spring.jpa.hibernate.ddl-auto=update
+💡 Learned:
+Backend ↔ Database connection
+Configuration handling
+✅ 5. Created Customer Entity
+@Entity
+public class Customer {
+    @Id
+    @GeneratedValue
+    private Long id;
+    ...
+}
+💡 Learned:
+@Entity → table mapping
+@Id → primary key
+ORM concept
+✅ 6. Table Auto-Creation (Important milestone)
+
+👉 Hibernate automatically created:
+
+customer table in MySQL
+💡 Learned:
+ORM (Object Relational Mapping)
+No need to write SQL manually
+🧠 🟠 PHASE 3: Backend Architecture
+✅ 7. Repository Layer
+public interface CustomerRepository extends JpaRepository<Customer, Long> {}
+💡 Learned:
+No SQL needed
+Built-in methods:
+save()
+findAll()
+✅ 8. Service Layer
+@Service
+public class CustomerService {
+    public Customer addCustomer(...) { ... }
+}
+💡 Learned:
+Business logic separation
+Clean architecture
+@Autowired (dependency injection)
+✅ 9. Controller Layer
+@RestController
+@RequestMapping("/customers")
+
+Endpoints:
+
+POST → add customer
+GET → fetch customers
+💡 Learned:
+REST APIs
+Request/Response handling
+🧠 🔵 PHASE 4: Data Flow (VERY IMPORTANT)
+
+Your system now works like:
+
+Client (Postman)
+   ↓
+Controller
+   ↓
+Service
+   ↓
+Repository
+   ↓
+MySQL Database
+
+👉 This is industry-level flow
+
+🧠 🟣 PHASE 5: Testing
+✅ You tested:
+POST:
+{
+  "name": "Kimaya",
+  "loginFrequency": 5,
+  "daysSinceLastLogin": 10,
+  "supportTickets": 2
+}
+GET:
+Successfully fetched data
+DB Check:
+SELECT * FROM customer;
+
+👉 Data persisted ✅
