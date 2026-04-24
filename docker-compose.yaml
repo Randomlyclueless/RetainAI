@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  ml-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.ml
+    ports:
+      - "5000:5000"
+    container_name: churn-ml
+
+  agent-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    ports:
+      - "8080:8080"
+    container_name: churn-agent
+    depends_on:
+      - ml-service

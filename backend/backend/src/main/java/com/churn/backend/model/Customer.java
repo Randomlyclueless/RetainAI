@@ -19,81 +19,34 @@ public class Customer {
     private int internetService;
     private int paymentMethod;
 
-    // 🔥 NEW FIELDS (VERY IMPORTANT)
     private Integer prediction;
     private Double probability;
 
     public Customer() {}
 
-    // Getters & Setters
+    public Long getId() { return id; }
 
-    public Long getId() {
-        return id;
-    }
+    public int getTenure() { return tenure; }
+    public void setTenure(int tenure) { this.tenure = tenure; }
 
-    public int getTenure() {
-        return tenure;
-    }
+    public double getMonthlyCharges() { return monthlyCharges; }
+    public void setMonthlyCharges(double monthlyCharges) { this.monthlyCharges = monthlyCharges; }
 
-    public void setTenure(int tenure) {
-        this.tenure = tenure;
-    }
+    public double getTotalCharges() { return totalCharges; }
+    public void setTotalCharges(double totalCharges) { this.totalCharges = totalCharges; }
 
-    public double getMonthlyCharges() {
-        return monthlyCharges;
-    }
+    public int getContract() { return contract; }
+    public void setContract(int contract) { this.contract = contract; }
 
-    public void setMonthlyCharges(double monthlyCharges) {
-        this.monthlyCharges = monthlyCharges;
-    }
+    public int getInternetService() { return internetService; }
+    public void setInternetService(int internetService) { this.internetService = internetService; }
 
-    public double getTotalCharges() {
-        return totalCharges;
-    }
+    public int getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(int paymentMethod) { this.paymentMethod = paymentMethod; }
 
-    public void setTotalCharges(double totalCharges) {
-        this.totalCharges = totalCharges;
-    }
+    public Integer getPrediction() { return prediction; }
+    public void setPrediction(Integer prediction) { this.prediction = prediction; }
 
-    public int getContract() {
-        return contract;
-    }
-
-    public void setContract(int contract) {
-        this.contract = contract;
-    }
-
-    public int getInternetService() {
-        return internetService;
-    }
-
-    public void setInternetService(int internetService) {
-        this.internetService = internetService;
-    }
-
-    public int getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(int paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
-    // 🔥 NEW GETTERS & SETTERS
-
-    public Integer getPrediction() {
-        return prediction;
-    }
-
-    public void setPrediction(Integer prediction) {
-        this.prediction = prediction;
-    }
-
-    public Double getProbability() {
-        return probability;
-    }
-
-    public void setProbability(Double probability) {
-        this.probability = probability;
-    }
+    public Double getProbability() { return probability; }
+    public void setProbability(Double probability) { this.probability = probability; }
 }

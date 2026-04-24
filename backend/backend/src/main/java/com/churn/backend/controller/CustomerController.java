@@ -22,25 +22,21 @@ public class CustomerController {
     @Autowired
     private CustomerService service;
 
-    // Add customer manually
     @PostMapping
     public Customer addCustomer(@RequestBody Customer customer) {
         return service.saveCustomer(customer);
     }
 
-    // Get all customers
     @GetMapping
     public List<Customer> getCustomers() {
         return service.getAllCustomers();
     }
 
-    // 🔥 ML Prediction
     @PostMapping("/ml-predict")
     public Map<String, Object> predictUsingML(@RequestBody Customer customer) {
         return service.getMLPrediction(customer);
     }
 
-    // 🔥 NEW STATS API
     @GetMapping("/stats")
     public Map<String, Object> getStats() {
         return service.getStats();
