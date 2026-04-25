@@ -1,0 +1,6 @@
+{
+  "css.lint.unknownAtRules": "ignore",
+  "eslint.rules.customizations": [
+    { "rule": "jsx-a11y/anchor-is-valid", "severity": "off" }
+  ]
+}
