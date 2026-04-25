@@ -1,123 +1,118 @@
-# 🚀 RetainAI – Customer Churn Prediction System
+# 🚀 RetainAI – Customer Churn Intelligence Platform (In Progress)
 
 ## 📌 Overview
-RetainAI is a full-stack machine learning system that predicts customer churn, stores results in a database, and provides analytics via a dashboard.
+RetainAI is a full-stack system designed to **predict and analyze customer churn** and evolve into an **intelligent retention platform**.
+
+The project is currently under active development, with a focus on rebuilding the machine learning pipeline to support **scalable, explainable, and production-ready MLOps workflows**.
 
 ---
 
-## 🧠 Architecture
+## 🎯 Current Focus
+- 🔄 Rebuilding ML pipeline from scratch  
+- 🧠 Designing explainable AI system  
+- ⚙️ Improving backend–ML integration  
+- 📊 Enhancing analytics & dashboard  
+
+---
+
+## 🧠 System Architecture (Planned)
 
 Frontend (React)  
 ↓  
-Backend (Spring Boot)  
+Backend (Spring Boot REST API)  
 ↓  
-ML API (Flask)  
+ML Microservice (Flask / FastAPI – Rebuilding)  
 ↓  
 MySQL Database  
 
----
-
-## 📁 Project Structure
-
+## 🏗️ Project Structure
 RetainAI/
 │
-├── backend/              # Spring Boot (Java backend)
-│   ├── controller/       # Handles API requests
-│   ├── service/          # Business logic + ML integration
-│   ├── repository/       # Database operations (JPA)
-│   ├── model/            # Entity (DB table structure)
-│   ├── BackendApplication.java  # Main entry point
-│   └── application.properties   # DB + config
+├── backend/ # Spring Boot backend
+│ ├── controller/ # REST API endpoints
+│ ├── service/ # Business logic
+│ ├── repository/ # Database operations (JPA)
+│ ├── model/ # Entity classes
+│ ├── BackendApplication.java
+│ └── application.properties
 │
-├── ML/                   # Flask ML API
-│   ├── app.py            # Prediction API
-│   ├── train_model.py    # Model training
-│   └── churn_model.pkl   # Trained model
+├── ML/ # 🚧 Under Reconstruction
+│ ├── (to be redesigned)
 │
-├── frontend/             # React frontend
-│   └── my-app/
-│       ├── src/
-│       │   ├── pages/    # Predict page
-│       │   ├── Dashboard.js
-│       │   └── App.js
+├── frontend/ # React frontend
+│ └── my-app/
+│ ├── src/
+│ │ ├── pages/
+│ │ ├── components/
+│ │ ├── Dashboard.js
+│ │ └── App.js
+---
+
 
 ---
 
-## ⚙️ Backend (Java) – File Roles
+## ⚙️ Tech Stack
 
-- BackendApplication.java → Starts the Spring Boot server  
-- Customer.java → Defines customer data (mapped to MySQL table)  
-- CustomerRepository.java → Handles database operations (save, fetch, count)  
-- CustomerService.java → Core logic (calls ML API, saves data, computes stats)  
-- CustomerController.java → Exposes REST APIs (/ml-predict, /stats)  
-
----
-
-## 🧪 Setup & Run
-
-### 1. Start MySQL
-
-mysql -u root -p
-
-Then run:
-
-CREATE DATABASE churn_db;
+| Layer        | Technology |
+|-------------|-----------|
+| Frontend    | React.js |
+| Backend     | Spring Boot (Java) |
+| ML (Planned)| Python (Flask / FastAPI, Scikit-learn) |
+| Database    | MySQL |
+| Integration | REST APIs |
 
 ---
 
-### 2. Run ML API (Flask)
+## 🔌 API Endpoints (Backend)
 
-cd ML  
-pip install flask pandas scikit-learn joblib  
-python app.py  
-
-Runs on: http://localhost:5000  
-
----
-
-### 3. Run Backend (Spring Boot)
-
-cd backend/backend  
-.\mvnw.cmd spring-boot:run  
-
-Runs on: http://localhost:8080  
+| Method | Endpoint | Description |
+|-------|----------|------------|
+| POST  | `/customers/ml-predict` | Predict churn (ML integration in progress) |
+| GET   | `/customers`            | Fetch all customers |
+| GET   | `/customers/stats`      | Analytics data |
 
 ---
 
-### 4. Run Frontend (React)
+## 📊 Current Features
 
-cd frontend/my-app  
-npm install  
-npm start  
-
-Runs on: http://localhost:3000  
-
----
-
-## 🔌 API Endpoints
-
-POST /customers/ml-predict → Predict churn  
-GET /customers → Get all customers  
-GET /customers/stats → Get analytics  
+- Backend APIs for customer data management  
+- Database integration with MySQL  
+- React dashboard for visualization  
+- Structured architecture for ML integration  
 
 ---
 
-## 📊 Features
+## 🚧 ML Pipeline (Rebuild Plan)
 
-- ML-based churn prediction  
-- Data stored in MySQL  
-- REST API using Spring Boot  
-- Analytics (high risk, low risk, churn rate)  
-- React dashboard  
+The ML module is being redesigned to include:
+
+- 🔍 Churn prediction model (improved accuracy)  
+- 🧠 Explainability (feature importance / SHAP)  
+- 🔄 Feedback loop for continuous learning  
+- 📈 Model monitoring & drift detection  
+- ⚡ Scalable API (Flask/FastAPI)  
 
 ---
 
-## 🚀 Future Improvements
+## 🚀 Future Enhancements
 
-- Add charts (pie/bar graphs)  
-- Dockerize project  
-- Add authentication  
-- Model monitoring (MLOps)  
+- 🎯 Retention recommendation engine (action system)  
+- 🐳 Docker-based deployment  
+- 🔐 Authentication & role-based access  
+- ☁️ Cloud deployment (AWS/GCP)  
+- 📊 Advanced analytics dashboard  
+
+---
+
+## 🧠 Problem Statement
+Customer churn significantly impacts business revenue.  
+RetainAI aims to help organizations **identify high-risk customers early and take data-driven actions to improve retention**.
+
+---
+
+## 📌 Project Status
+🚧 Actively under development  
+🔄 ML system currently being rebuilt  
 
 ---
 
@@ -126,3 +121,10 @@ GET /customers/stats → Get analytics
 - Kimaya Chavan  
 - Rutuja Bidarkar  
 - Hitu Bharal  
+
+---
+
+## ⭐ Contributions & Feedback
+This project is evolving—suggestions, ideas, and contributions are welcome!
+
+
