@@ -115,16 +115,3 @@ RetainAI aims to help organizations **identify high-risk customers early and tak
 🔄 ML system currently being rebuilt  
 
 ---
-
-## 👨‍💻 Team
-
-- Kimaya Chavan  
-- Rutuja Bidarkar  
-- Hitu Bharal  
-
----
-
-## ⭐ Contributions & Feedback
-This project is evolving—suggestions, ideas, and contributions are welcome!
-
-
