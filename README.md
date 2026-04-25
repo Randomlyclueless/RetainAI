@@ -66,13 +66,13 @@ RetainAI aims to help organizations **identify high-risk customers early and tak
 ## 🧪 Setup & Run (Current Version)
 
 > ⚠️ **Note:** ML module is under reconstruction. Current setup runs **Frontend + Backend only**.
-## backend commmands to run java
+## backend commmands to run java - cd backend/backend
 ```backend
-cd backend/backend
+
 ./mvnw spring-boot:run
 ```
-## frontend  commands
-```frontend cd frontend/my-app
+## frontend  commands - cd frontend/my-app
+```frontend 
 npm install
 npm start
 
