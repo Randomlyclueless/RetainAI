@@ -1,26 +1,14 @@
 import React from "react";
-import "./LandingPage.css";
+import "../styles/LandingPage.css";
+// import Navbar from "../components/Navbar";
+// import { useNavigate } from "react-router-dom";
 import dashboard from "../assets/dashboard.png";
 export default function RetainAI() {
+  // const navigate = useNavigate(); // ✅ add this
+
   return (
     <div className="retain-app">
       {/* Top Nav */}
-      <header className="navbar">
-        <nav className="navbar-inner">
-          <div className="navbar-left">
-            <a href="#" className="logo">RetainAI</a>
-            <div className="nav-links">
-              <a href="#" className="nav-link active">Features</a>
-              <a href="#" className="nav-link">How it Works</a>
-              <a href="#" className="nav-link">Pricing</a>
-            </div>
-          </div>
-          <div className="navbar-right">
-            <button className="btn-ghost">Log In</button>
-            <button className="btn-primary">Get Started</button>
-          </div>
-        </nav>
-      </header>
 
       <main className="main-content">
         {/* Hero Section */}
@@ -211,28 +199,6 @@ export default function RetainAI() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <span className="footer-logo">RetainAI</span>
-            <p className="footer-copy">© 2024 RetainAI. All rights reserved.</p>
-          </div>
-          <div className="footer-links">
-            <a href="#" className="footer-link">Privacy Policy</a>
-            <a href="#" className="footer-link">Terms of Service</a>
-            <a href="#" className="footer-link">Contact</a>
-          </div>
-          <div className="footer-socials">
-            <a href="#" className="social-icon">
-              <span className="material-symbols-outlined">public</span>
-            </a>
-            <a href="#" className="social-icon">
-              <span className="material-symbols-outlined">share</span>
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

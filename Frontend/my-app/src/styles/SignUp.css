@@ -1,0 +1,448 @@
+/* =========================================
+   CSS Variables / Design Tokens
+   ========================================= */
+:root {
+  --color-surface: #f8f9ff;
+  --color-primary: #4f46e5;
+  --color-primary-dim: #3525cd;
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #464555;
+  --color-outline-variant: #c7c4d8;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container: #e5eeff;
+  --color-error: #ba1a1a;
+  --color-white: #ffffff;
+
+  --font-family: "Inter", sans-serif;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 24px rgba(79, 70, 229, 0.08), 0 1px 4px rgba(0,0,0,0.06);
+  --shadow-btn: 0 4px 14px rgba(79, 70, 229, 0.3);
+
+  --transition: 0.18s ease;
+}
+
+/* =========================================
+   Global Reset & Base
+   ========================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* =========================================
+   Navbar
+   ========================================= */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(199, 196, 216, 0.4);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 64px;
+  width: 100%;
+}
+
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbar__logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+  transition: opacity var(--transition);
+}
+.navbar__logo:hover { opacity: 0.8; }
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navbar__links a {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #64748b;
+  transition: color var(--transition);
+}
+.navbar__links a:hover { color: var(--color-primary); }
+
+.navbar__right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar__login {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  transition: color var(--transition);
+}
+.navbar__login:hover { color: var(--color-primary); }
+
+.navbar__cta {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: opacity var(--transition), transform var(--transition);
+}
+.navbar__cta:hover { opacity: 0.9; }
+.navbar__cta:active { transform: scale(0.97); }
+
+/* =========================================
+   Main Layout
+   ========================================= */
+.main {
+  min-height: calc(100vh - 144px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  max-width: 1280px;
+  width: 100%;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* =========================================
+   Branding Side
+   ========================================= */
+.branding {
+  display: none;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-right: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .branding {
+    display: flex;
+  }
+}
+
+.branding__headline {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-on-surface);
+}
+
+.branding__accent {
+  color: var(--color-primary);
+}
+
+.branding__subtext {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-on-surface-variant);
+  max-width: 32rem;
+}
+
+.branding__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(79, 70, 229, 0.15), 0 4px 12px rgba(0,0,0,0.08);
+  border: 1px solid rgba(199, 196, 216, 0.2);
+}
+
+.branding__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* =========================================
+   Form Container
+   ========================================= */
+.form-container {
+  width: 100%;
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .form-container {
+    margin: 0;
+  }
+}
+
+.form-card {
+  background-color: var(--color-surface-container-lowest);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(199, 196, 216, 0.12);
+}
+
+.form-card__header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.form-card__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-on-surface);
+  margin-bottom: 0.375rem;
+}
+
+.form-card__subtitle {
+  font-size: 0.875rem;
+  color: var(--color-on-surface-variant);
+  line-height: 1.5;
+}
+
+/* =========================================
+   Form Elements
+   ========================================= */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .form__row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.form__label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-on-surface-variant);
+}
+
+.form__input {
+  width: 100%;
+  height: 44px;
+  padding: 0 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-outline-variant);
+  background-color: #ffffff;
+  font-size: 0.875rem;
+  font-family: var(--font-family);
+  color: var(--color-on-surface);
+  outline: none;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form__input::placeholder {
+  color: rgba(119, 117, 135, 0.5);
+}
+
+.form__input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.form__select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%23777587' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
+}
+
+.form__submit {
+  width: 100%;
+  height: 48px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: var(--font-family);
+  cursor: pointer;
+  margin-top: 0.5rem;
+  box-shadow: var(--shadow-btn);
+  transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+  letter-spacing: 0.01em;
+}
+
+.form__submit:hover {
+  opacity: 0.93;
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+.form__submit:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-btn);
+}
+
+/* =========================================
+   Form Card Footer
+   ========================================= */
+.form-card__footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(199, 196, 216, 0.2);
+  text-align: center;
+}
+
+.form-card__footer p {
+  font-size: 0.875rem;
+  color: var(--color-on-surface-variant);
+}
+
+.form-card__login-link {
+  color: var(--color-primary);
+  font-weight: 600;
+  transition: text-decoration var(--transition);
+}
+.form-card__login-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* =========================================
+   Footer
+   ========================================= */
+.footer {
+  width: 100%;
+  padding: 3rem 0;
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.footer__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .footer__inner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.footer__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+@media (min-width: 768px) {
+  .footer__brand {
+    align-items: flex-start;
+  }
+}
+
+.footer__brand-name {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.footer__links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.footer__links a {
+  color: #64748b;
+  transition: color var(--transition);
+}
+
+.footer__links a:hover {
+  color: #0f172a;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* =========================================
+   Responsive: Hide nav links on mobile
+   ========================================= */
+@media (max-width: 767px) {
+  .navbar__links {
+    display: none;
+  }
+
+  .form-card {
+    padding: 1.75rem 1.25rem;
+  }
+}

@@ -1,0 +1,466 @@
+/* =========================================
+   CSS Variables / Design Tokens
+   ========================================= */
+:root {
+  --color-surface: #f8f9ff;
+  --color-background: #f8f9ff;
+  --color-primary: #3525cd;
+  --color-primary-container: #4f46e5;
+  --color-secondary: #4648d4;
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #464555;
+  --color-on-primary: #ffffff;
+  --color-outline: #777587;
+  --color-outline-variant: #c7c4d8;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container: #e5eeff;
+  --color-white: #ffffff;
+
+  --font-family: "Inter", sans-serif;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+
+  --shadow-card: 0 8px 30px rgba(79, 70, 229, 0.06);
+  --shadow-btn: 0 4px 14px rgba(79, 70, 229, 0.25);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  --transition: 0.18s ease;
+}
+
+/* =========================================
+   Global Reset & Base
+   ========================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--color-on-surface);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  background-image:
+    linear-gradient(rgba(15, 20, 50, 0.45), rgba(15, 20, 50, 0.45)),
+    url("../assets/bg-texture.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: var(--font-family);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* =========================================
+   Navbar
+   ========================================= */
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 64px;
+  width: 100%;
+}
+
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbar__logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navbar__links a {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.75);
+  transition: color var(--transition);
+}
+.navbar__links a:hover { color: #fff; }
+
+.navbar__right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar__login {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
+}
+.navbar__login:hover {
+  background-color: rgba(255,255,255,0.12);
+  color: #fff;
+}
+.navbar__login:active { transform: scale(0.96); }
+
+.navbar__cta {
+  padding: 0.625rem 1.25rem;
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: opacity var(--transition), transform var(--transition);
+}
+.navbar__cta:hover { opacity: 0.9; }
+.navbar__cta:active { transform: scale(0.96); }
+
+@media (max-width: 767px) {
+  .navbar__links { display: none; }
+}
+
+/* =========================================
+   Main
+   ========================================= */
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem;
+}
+
+.main__inner {
+  width: 100%;
+  max-width: 440px;
+}
+
+/* =========================================
+   Login Card
+   ========================================= */
+.card {
+  background-color: var(--color-surface-container-lowest);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(199, 196, 216, 0.1);
+  padding: 2.5rem;
+}
+
+.card__header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.card__title {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--color-on-surface);
+  margin-bottom: 0.375rem;
+}
+
+.card__subtitle {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-on-surface-variant);
+}
+
+/* =========================================
+   Form
+   ========================================= */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-on-surface);
+}
+
+.form__input-wrap {
+  position: relative;
+}
+
+.form__icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.25rem;
+  color: var(--color-outline);
+  pointer-events: none;
+  user-select: none;
+  /* Material Symbols font settings */
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.form__input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 2.75rem;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-family: var(--font-family);
+  color: var(--color-on-surface);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form__input::placeholder {
+  color: rgba(119, 117, 135, 0.55);
+}
+
+.form__input:focus {
+  border-color: var(--color-primary-container);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+/* =========================================
+   Actions Row
+   ========================================= */
+.form__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form__remember {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.form__checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: 0.25rem;
+  accent-color: var(--color-primary-container);
+  cursor: pointer;
+  transition: box-shadow var(--transition);
+}
+
+.form__checkbox:focus {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  outline: none;
+}
+
+.form__remember-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-on-surface-variant);
+  transition: color var(--transition);
+}
+
+.form__remember:hover .form__remember-label {
+  color: var(--color-on-surface);
+}
+
+.form__forgot {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-secondary);
+  transition: text-decoration var(--transition);
+}
+.form__forgot:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* =========================================
+   Submit Button
+   ========================================= */
+.form__submit {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary);
+  border-radius: var(--radius-md);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: 0em;
+  box-shadow: var(--shadow-btn);
+  transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+.form__submit:hover {
+  opacity: 0.9;
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
+}
+.form__submit:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-btn);
+}
+
+/* =========================================
+   Card Footer
+   ========================================= */
+.card__footer {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(199, 196, 216, 0.1);
+  text-align: center;
+}
+
+.card__footer p {
+  font-size: 0.875rem;
+  color: var(--color-on-surface-variant);
+}
+
+.card__signup-link {
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin-left: 0.25rem;
+  transition: text-decoration var(--transition);
+}
+.card__signup-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* =========================================
+   Trust Badge
+   ========================================= */
+.trust-badge {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: rgba(229, 238, 255, 0.5);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(199, 196, 216, 0.1);
+}
+
+.trust-badge__icon {
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  flex-shrink: 0;
+}
+
+.trust-badge__text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-on-surface-variant);
+  text-transform: uppercase;
+}
+
+/* =========================================
+   Footer
+   ========================================= */
+.footer {
+  width: 100%;
+  padding: 3rem 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.55);
+}
+
+.footer__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .footer__inner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.footer__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+}
+@media (min-width: 768px) {
+  .footer__brand { align-items: flex-start; }
+}
+
+.footer__brand-name {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+}
+
+.footer__links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.footer__links a {
+  color: rgba(255,255,255,0.55);
+  transition: color var(--transition);
+}
+.footer__links a:hover {
+  color: rgba(255,255,255,0.9);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* bg-decoration replaced by CSS body background */
