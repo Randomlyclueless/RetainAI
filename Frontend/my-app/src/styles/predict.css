@@ -1,0 +1,73 @@
+/* FULL PAGE */
+.predict-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a, #1e3a5f);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px; /* SPACE BETWEEN CARDS */
+  padding: 40px;
+  flex-wrap: wrap;
+}
+
+/* CARD */
+.predict-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  padding: 30px;
+  border-radius: 16px;
+  width: 380px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  color: #fff;
+}
+
+/* HEADINGS */
+.predict-card h2 {
+  margin-bottom: 20px;
+}
+
+/* FORM GRID */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* INPUTS */
+input, select {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+/* BUTTONS */
+.buttons {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* RESULT */
+.result {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+}

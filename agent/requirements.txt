@@ -1,0 +1,10 @@
+flask
+pandas
+numpy
+scikit-learn
+joblib
+shap
+langchain
+langgraph
+openai
+python-dotenv
