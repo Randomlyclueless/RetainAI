@@ -20,13 +20,13 @@ export default function Login() {
     e.preventDefault();
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("userEmail", form.email);
-    navigate("/home");
+    navigate("/dashboard");
   };
 
   const handleDemoLogin = () => {
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("userEmail", "demo@retainai.com");
-    navigate("/home");
+    navigate("/dashboard");
   };
 
   return (

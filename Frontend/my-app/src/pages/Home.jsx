@@ -1,7 +1,19 @@
-import React from "react";
 import Navbar2 from "../components/Navbar2";
-
+import React, { useRef } from "react";
 export default function Home() {
+  const fileInputRef = useRef(null);
+
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    console.log(file);
+  };
   return (
       <>
         {/*<Navbar2 />*/}
@@ -14,12 +26,22 @@ export default function Home() {
           </p>
 
           {/* Main Action */}
-          <button
-              style={styles.primaryBtn}
-              onClick={() => alert("Dataset upload feature coming soon!")}
-          >
-            Upload Dataset
-          </button>
+          <>
+            <button
+                style={styles.primaryBtn}
+                onClick={handleUploadClick}
+            >
+              Upload Dataset
+            </button>
+
+            <input
+                type="file"
+                accept=".csv"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+            />
+          </>
 
           {/* Placeholder Card */}
           <div style={styles.card}>

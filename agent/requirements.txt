@@ -1,10 +1,15 @@
 flask
+flask-cors
+
 pandas
 numpy
 scikit-learn
 joblib
+xgboost
 shap
+
 langchain
 langgraph
-openai
+google-generativeai
+
 python-dotenv

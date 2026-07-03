@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import AICopilot from "../components/AICopilot";
 import FileUpload from "../components/FileUpload";
@@ -89,7 +89,19 @@ export default function Dashboard() {
 
   }, [navigate]);
 
+  const fileInputRef = useRef(null);
 
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    console.log(file);
+  };
 
   return (
       <>
@@ -111,9 +123,22 @@ export default function Dashboard() {
 
             <div style={styles.actions}>
 
-              <button style={styles.primaryBtn}>
-                Upload Dataset
-              </button>
+              <>
+                <button
+                    style={styles.primaryBtn}
+                    onClick={handleUploadClick}
+                >
+                  Upload Dataset
+                </button>
+
+                <input
+                    type="file"
+                    accept=".csv"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    style={{ display: "none" }}
+                />
+              </>
 
               <button
                   style={styles.secondaryBtn}

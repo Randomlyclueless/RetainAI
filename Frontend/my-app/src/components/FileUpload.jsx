@@ -22,7 +22,7 @@ export default function FileUpload({
     try {
 
       await axios.post(
-        "http://localhost:8080/upload",
+        "http://localhost:8080/upload-csv",
         formData,
         {
           headers: {
@@ -39,6 +39,11 @@ export default function FileUpload({
     } catch (error) {
 
       console.log(error);
+
+      if (error.response) {
+        console.log("Status:", error.response.status);
+        console.log("Data:", error.response.data);
+      }
 
       alert("Upload Failed");
 
