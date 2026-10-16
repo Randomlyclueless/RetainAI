@@ -32,11 +32,6 @@ public class CustomerController {
         return service.getAllCustomers();
     }
 
-    @PostMapping("/ml-predict")
-    public Map<String, Object> predictUsingML(@RequestBody Customer customer) {
-        return service.getMLPrediction(customer);
-    }
-
     @GetMapping("/stats")
     public Map<String, Object> getStats() {
         return service.getStats();

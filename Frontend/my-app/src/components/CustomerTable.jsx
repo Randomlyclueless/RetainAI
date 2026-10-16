@@ -1,259 +1,180 @@
+
 import React, { useState } from "react";
 
-export default function CustomerTable({ customers }) {
-
+export default function CustomerTable({ customers = [] }) {
   const [search, setSearch] = useState("");
-  const [sortField, setSortField] = useState("id");
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const customersPerPage = 5;
-
-  // SEARCH
-  const filteredCustomers = customers.filter((customer) =>
-    customer.name?.toLowerCase().includes(search.toLowerCase()) ||
-    customer.email?.toLowerCase().includes(search.toLowerCase())
-  );
-
-  // SORT
-  const sortedCustomers = [...filteredCustomers].sort((a, b) => {
-
-    if (typeof a[sortField] === "string") {
-      return a[sortField].localeCompare(b[sortField]);
-    }
-
-    return a[sortField] - b[sortField];
-
+  const filteredCustomers = customers.filter((customer) => {
+    const query = search.toLowerCase();
+    return (
+      customer.name?.toLowerCase().includes(query) ||
+      customer.email?.toLowerCase().includes(query)
+    );
   });
 
-  // PAGINATION
-  const indexOfLast = currentPage * customersPerPage;
-  const indexOfFirst = indexOfLast - customersPerPage;
-
-  const currentCustomers =
-    sortedCustomers.slice(indexOfFirst, indexOfLast);
-
-  const totalPages =
-    Math.ceil(sortedCustomers.length / customersPerPage);
-
   return (
-
     <div style={styles.container}>
-
-      {/* TOP BAR */}
-      <div style={styles.topBar}>
-
+      <div style={styles.toolbar}>
         <input
-          type="text"
-          placeholder="Search customers..."
+          type="search"
+          placeholder="Search by customer name or email..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={styles.searchInput}
+          onChange={(event) => setSearch(event.target.value)}
+          style={styles.search}
         />
-
-        <select
-          value={sortField}
-          onChange={(e) => setSortField(e.target.value)}
-          style={styles.select}
-        >
-
-          <option value="id">Sort by ID</option>
-          <option value="name">Sort by Name</option>
-          <option value="tenure">Sort by Tenure</option>
-          <option value="probability">Sort by Probability</option>
-
-        </select>
-
+        <span style={styles.count}>
+          {filteredCustomers.length} customers
+        </span>
       </div>
 
-      {/* TABLE */}
-      <table style={styles.table}>
-
-        <thead>
-
-          <tr style={styles.tableHead}>
-
-            <th style={styles.th}>Name</th>
-            <th style={styles.th}>Email</th>
-            <th style={styles.th}>Company</th>
-            <th style={styles.th}>Tenure</th>
-            <th style={styles.th}>Risk</th>
-            <th style={styles.th}>Probability</th>
-            <th style={styles.th}>AI Explanation</th>
-            <th style={styles.th}>AI Recommendation</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          {currentCustomers.map((customer) => (
-
-            <tr key={customer.id} style={styles.row}>
-
-              <td style={styles.td}>
-                {customer.name}
-              </td>
-
-              <td style={styles.td}>
-                {customer.email}
-              </td>
-
-              <td style={styles.td}>
-                {customer.company}
-              </td>
-
-              <td style={styles.td}>
-                {customer.tenure}
-              </td>
-
-              <td style={styles.td}>
-
-                <span
-                  style={{
-                    ...styles.badge,
-                    background:
-                      customer.prediction === 1
-                        ? "#fee2e2"
-                        : "#dcfce7",
-                    color:
-                      customer.prediction === 1
-                        ? "#dc2626"
-                        : "#16a34a",
-                  }}
-                >
-                  {customer.prediction === 1
-                    ? "High Risk"
-                    : "Low Risk"}
-                </span>
-
-              </td>
-
-              <td style={styles.td}>
-                {(customer.probability * 100).toFixed(1)}%
-              </td>
-
-              <td>
-                {customer.explanation}
-              </td>
-
-              <td>
-                {customer.recommendation}
-              </td>
-
+      <div style={styles.tableWrapper}>
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>Customer</th>
+              <th style={styles.th}>Tenure</th>
+              <th style={styles.th}>Risk level</th>
+              <th style={styles.th}>Churn probability</th>
             </tr>
+          </thead>
+          <tbody>
+            {filteredCustomers.length === 0 ? (
+              <tr>
+                <td colSpan="4" style={styles.empty}>
+                  {search
+                    ? "No matching customers found."
+                    : "No customers yet. Add a customer above to get started."}
+                </td>
+              </tr>
+            ) : (
+              filteredCustomers.map((customer) => {
+                const risk = customer.riskLevel || "UNKNOWN";
+                const riskStyle =
+                  risk === "HIGH"
+                    ? styles.highRisk
+                    : risk === "MEDIUM"
+                      ? styles.mediumRisk
+                      : risk === "LOW"
+                        ? styles.lowRisk
+                        : styles.unknownRisk;
 
-          ))}
-
-        </tbody>
-
-      </table>
-
-      {/* PAGINATION */}
-      <div style={styles.pagination}>
-
-        {[...Array(totalPages)].map((_, index) => (
-
-          <button
-            key={index}
-            onClick={() => setCurrentPage(index + 1)}
-            style={{
-              ...styles.pageBtn,
-              background:
-                currentPage === index + 1
-                  ? "#4f46e5"
-                  : "#fff",
-              color:
-                currentPage === index + 1
-                  ? "#fff"
-                  : "#111827",
-            }}
-          >
-            {index + 1}
-          </button>
-
-        ))}
-
+                return (
+                  <tr key={customer.id}>
+                    <td style={styles.td}>
+                      <strong>{customer.name || "Unnamed customer"}</strong>
+                      <div style={styles.email}>{customer.email || "—"}</div>
+                    </td>
+                    <td style={styles.td}>
+                      {customer.tenure} months
+                    </td>
+                    <td style={styles.td}>
+                      <span style={{ ...styles.badge, ...riskStyle }}>
+                        {risk}
+                      </span>
+                    </td>
+                    <td style={styles.td}>
+                      {Number.isFinite(Number(customer.probability))
+                        ? `${(Number(customer.probability) * 100).toFixed(1)}%`
+                        : "—"}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
       </div>
-
     </div>
-
   );
-
 }
 
 const styles = {
-
   container: {
     background: "#fff",
-    borderRadius: "20px",
-    padding: "25px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+    border: "1px solid #e8edf4",
+    borderRadius: "14px",
+    padding: "20px",
+    boxShadow: "0 3px 12px rgba(15, 23, 42, 0.03)",
   },
-
-  topBar: {
+  toolbar: {
     display: "flex",
     justifyContent: "space-between",
-    marginBottom: "20px",
-    gap: "20px",
+    alignItems: "center",
+    gap: "12px",
     flexWrap: "wrap",
+    marginBottom: "18px",
   },
-
-  searchInput: {
-    padding: "12px",
-    borderRadius: "10px",
-    border: "1px solid #d1d5db",
-    minWidth: "250px",
+  search: {
+    flex: "1 1 250px",
+    maxWidth: "420px",
+    boxSizing: "border-box",
+    padding: "11px 13px",
+    border: "1px solid #dbe2ea",
+    borderRadius: "8px",
+    fontSize: "14px",
   },
-
-  select: {
-    padding: "12px",
-    borderRadius: "10px",
-    border: "1px solid #d1d5db",
+  count: {
+    color: "#64748b",
+    fontSize: "13px",
   },
-
+  tableWrapper: {
+    width: "100%",
+    overflowX: "auto",
+  },
   table: {
     width: "100%",
+    minWidth: "520px",
     borderCollapse: "collapse",
-  },
-
-  tableHead: {
-    background: "#f9fafb",
-  },
-
-  th: {
     textAlign: "left",
-    padding: "16px",
-    color: "#6b7280",
   },
-
+  th: {
+    padding: "13px 12px",
+    background: "#f8fafc",
+    color: "#64748b",
+    fontSize: "12px",
+    fontWeight: 700,
+    textTransform: "uppercase",
+    letterSpacing: "0.4px",
+    borderBottom: "1px solid #e8edf4",
+  },
   td: {
-    padding: "16px",
-    borderBottom: "1px solid #f3f4f6",
+    padding: "16px 12px",
+    color: "#334155",
+    fontSize: "14px",
+    borderBottom: "1px solid #f1f5f9",
   },
-
-  row: {
-    transition: "0.2s",
+  email: {
+    marginTop: "5px",
+    color: "#64748b",
+    fontSize: "12px",
   },
-
   badge: {
-    padding: "8px 14px",
-    borderRadius: "999px",
-    fontSize: "13px",
-    fontWeight: "600",
+    display: "inline-block",
+    padding: "6px 10px",
+    borderRadius: "20px",
+    fontSize: "11px",
+    fontWeight: 700,
   },
-
-  pagination: {
-    marginTop: "25px",
-    display: "flex",
-    gap: "10px",
+  highRisk: {
+    background: "#fee2e2",
+    color: "#b91c1c",
   },
-
-  pageBtn: {
-    padding: "10px 14px",
-    borderRadius: "8px",
-    border: "1px solid #d1d5db",
-    cursor: "pointer",
+  mediumRisk: {
+    background: "#fef3c7",
+    color: "#92400e",
   },
-
+  lowRisk: {
+    background: "#dcfce7",
+    color: "#166534",
+  },
+  unknownRisk: {
+    background: "#e2e8f0",
+    color: "#475569",
+  },
+  empty: {
+    padding: "32px 12px",
+    textAlign: "center",
+    color: "#64748b",
+    fontSize: "14px",
+  },
 };

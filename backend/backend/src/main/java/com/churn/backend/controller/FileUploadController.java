@@ -1,11 +1,7 @@
 package com.churn.backend.controller;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.churn.backend.model.Customer;
+import com.churn.backend.repository.CustomerRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,9 +12,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @CrossOrigin
 public class FileUploadController {
+
+    private final CustomerRepository customerRepository;
+
+    public FileUploadController(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     @PostMapping(value = "/upload-csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadCSV(@RequestParam("file") MultipartFile file) {
@@ -32,6 +41,7 @@ public class FileUploadController {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
 
             String headerLine = br.readLine();
+
             if (headerLine == null) {
                 return ResponseEntity.badRequest().body("CSV has no header");
             }
@@ -39,7 +49,9 @@ public class FileUploadController {
             String[] headers = headerLine.split(",");
 
             String line;
+
             while ((line = br.readLine()) != null) {
+
                 String[] values = line.split(",");
 
                 Map<String, String> row = new HashMap<>();
@@ -51,7 +63,29 @@ public class FileUploadController {
                 dataList.add(row);
             }
 
-            // 🔥 For now just return parsed data count
+            // ==========================
+            // Save ONLY the first customer
+            // ==========================
+
+            if (!dataList.isEmpty()) {
+
+                Map<String, String> firstRow = dataList.get(0);
+
+                Customer customer = new Customer();
+
+                customer.setName(firstRow.get("customerID"));
+                customer.setEmail("N/A");
+                customer.setCompany("Telecom");
+                customer.setPhone("N/A");
+                customer.setRiskLevel("Unknown");
+
+                customer.setTenure(Integer.parseInt(firstRow.get("tenure")));
+                customer.setMonthlyCharges(Double.parseDouble(firstRow.get("MonthlyCharges")));
+                customer.setTotalCharges(Double.parseDouble(firstRow.get("TotalCharges")));
+
+                customerRepository.save(customer);
+            }
+
             return ResponseEntity.ok(Map.of(
                     "message", "CSV processed successfully",
                     "rows", dataList.size(),
@@ -59,8 +93,11 @@ public class FileUploadController {
             ));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error processing file: " + e.getMessage());
+
         }
     }
 }

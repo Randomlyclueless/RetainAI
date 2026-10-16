@@ -1,0 +1,28 @@
+{
+    "accuracy": 0.8034,
+    "precision": 0.6502,
+    "recall": 0.5615,
+    "f1": 0.6026,
+    "roc_auc": 0.8486,
+    "confusion_matrix": [
+        [
+            922,
+            113
+        ],
+        [
+            164,
+            210
+        ]
+    ],
+    "features": [
+        "tenure",
+        "monthlyCharges",
+        "totalCharges",
+        "contract",
+        "internetService",
+        "paymentMethod"
+    ],
+    "model": "XGBoost",
+    "test_size": 0.2,
+    "random_state": 42
+}

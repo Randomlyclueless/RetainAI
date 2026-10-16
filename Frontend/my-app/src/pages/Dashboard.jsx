@@ -1,453 +1,269 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import AICopilot from "../components/AICopilot";
-import FileUpload from "../components/FileUpload";
-import AnalyticsCharts from "../components/AnalyticsCharts";
+
+import React, { useCallback, useEffect, useState } from "react";
 import CustomerForm from "../components/CustomerForm";
 import CustomerTable from "../components/CustomerTable";
-import AIInsights from "../components/AIInsights";
-import AIExplanationCard from "../components/AIExplanationCard";
-import axios from "axios";
+
+const API_URL = "http://localhost:8080";
 
 export default function Dashboard() {
-
-  const navigate = useNavigate();
-
-  const logout = () => {
-
-    localStorage.removeItem(
-        "isLoggedIn"
-    );
-
-    localStorage.removeItem(
-        "userEmail"
-    );
-
-    navigate("/login");
-
-  };
-
   const [customers, setCustomers] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const highRiskCustomer =
-      customers.find(
-          (customer) =>
-              customer.prediction === 1
-      );
+  const loadDashboard = useCallback(async () => {
+    setError("");
 
-  const [stats, setStats] = useState({});
+    try {
+      const [customersResponse, statsResponse] = await Promise.all([
+        fetch(`${API_URL}/customers`),
+        fetch(`${API_URL}/customers/stats`),
+      ]);
 
-  const fetchCustomers = () => {
+      if (!customersResponse.ok || !statsResponse.ok) {
+        throw new Error("Could not load dashboard data.");
+      }
 
-    axios
-        .get("http://localhost:8080/customers")
-        .then((response) => {
-          setCustomers(response.data);
-        })
-        .catch((error) => {
-          console.log("Error fetching customers:", error);
-        });
+      const [customerData, statsData] = await Promise.all([
+        customersResponse.json(),
+        statsResponse.json(),
+      ]);
 
-  };
+      if (!Array.isArray(customerData)) {
+        throw new Error("Unexpected customer data returned by the API.");
+      }
 
-  const fetchStats = () => {
-
-    axios
-        .get("http://localhost:8080/customers/stats")
-        .then((response) => {
-
-          setStats(response.data);
-
-        })
-        .catch((error) => {
-
-          console.log("Error fetching stats:", error);
-
-        });
-
-  };
-
-  useEffect(() => {
-
-    fetchCustomers();
-    fetchStats();
-
+      setCustomers(customerData);
+      setStats(statsData);
+    } catch (err) {
+      setError(err.message || "Unable to connect to the backend.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
-    const loggedIn =
-        localStorage.getItem(
-            "isLoggedIn"
-        );
+  const logout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userEmail");
+    window.location.href = "/login";
+  };
 
-    if (!loggedIn) {
-
-      navigate("/login");
-
-    }
-
-  }, [navigate]);
-
-
+  const cards = [
+    {
+      title: "Total Customers",
+      value: stats?.totalCustomers ?? customers.length,
+      color: "#4f46e5",
+    },
+    {
+      title: "Predicted Churn",
+      value: stats?.highRisk ?? customers.filter(
+        (c) => Number(c.prediction) === 1
+      ).length,
+      color: "#dc2626",
+    },
+    {
+      title: "High Risk",
+      value: customers.filter(
+        (c) => String(c.riskLevel).toUpperCase() === "HIGH"
+      ).length,
+      color: "#d97706",
+    },
+    {
+      title: "Predicted Retention",
+      value: stats?.lowRisk ?? customers.filter(
+        (c) => Number(c.prediction) === 0
+      ).length,
+      color: "#059669",
+    },
+  ];
 
   return (
-      <>
-
-        <div style={styles.container}>
-
-          {/* Header */}
-          <div style={styles.header}>
-
-            <div>
-              <h1 style={styles.heading}>
-                Customer Retention Dashboard
-              </h1>
-
-              <p style={styles.subtext}>
-                Monitor churn analytics and customer predictions in real-time.
-              </p>
-            </div>
-
-            <div style={styles.actions}>
-
-              <button style={styles.primaryBtn}>
-                Upload Dataset
-              </button>
-
-              <button
-                  style={styles.secondaryBtn}
-                  onClick={() => navigate("/report")}
-              >
-                View Reports
-              </button>
-
-              <button
-                  style={styles.logoutBtn}
-                  onClick={logout}
-              >
-                Logout
-              </button>
-
-            </div>
-
+    <main style={styles.page}>
+      <div style={styles.container}>
+        <header style={styles.header}>
+          <div>
+            <p style={styles.eyebrow}>RETAINAI ANALYTICS</p>
+            <h1 style={styles.heading}>Dashboard</h1>
+            <p style={styles.subtitle}>
+              Monitor customer churn predictions and identify customers
+              who may need attention.
+            </p>
           </div>
 
-          <CustomerForm
-              refreshCustomers={() => {
-                fetchCustomers();
-                fetchStats();
-              }}
-          />
 
-          {/* Stats Cards */}
-          <div style={styles.grid}>
+        </header>
 
-            <div style={styles.card}>
-
-              <p style={styles.cardTitle}>Total Customers</p>
-
-              <h2 style={styles.cardNumber}>
-                {stats.totalCustomers || 0}
-              </h2>
-
-            </div>
-
-            <div style={styles.card}>
-
-              <p style={styles.cardTitle}>High Risk Customers</p>
-
-              <h2 style={styles.cardNumber}>
-                {stats.highRiskCustomers || 0}
-              </h2>
-
-            </div>
-
-            <div style={styles.card}>
-
-              <p style={styles.cardTitle}>Predictions Generated</p>
-
-              <h2 style={styles.cardNumber}>
-                {stats.totalCustomers || 0}
-              </h2>
-
-            </div>
-
-            <div style={styles.card}>
-
-              <p style={styles.cardTitle}>
-                Retention Rate
-              </p>
-
-              <h2 style={styles.cardNumber}>
-                {stats.retentionRate || 0}%
-              </h2>
-
-            </div>
-
+        {error && (
+          <div role="alert" style={styles.error}>
+            {error}
+            <button onClick={loadDashboard} style={styles.retryButton}>
+              Retry
+            </button>
           </div>
+        )}
 
-          <FileUpload
-              refreshCustomers={fetchCustomers}
-              refreshStats={fetchStats}
-          />
-
-          <AnalyticsCharts stats={stats} />
-
-          <AIInsights />
-
-          <AICopilot />
-
-          <CustomerTable customers={customers} />
-
-          <AIExplanationCard
-              customer={highRiskCustomer}
-          />
-
-          {/* Table */}
-          {/* <div style={styles.tableContainer}>
-
-          <div style={styles.tableHeader}>
-            <h2 style={styles.tableTitle}>
-              Customer Predictions
-            </h2>
-          </div>
-
-          <table style={styles.table}>
-
-            <thead>
-
-              <tr style={styles.tableHeadRow}>
-                <th style={styles.th}>ID</th>
-                <th style={styles.th}>Tenure</th>
-                <th style={styles.th}>Monthly Charges</th>
-                <th style={styles.th}>Total Charges</th>
-                <th style={styles.th}>Prediction</th>
-                <th style={styles.th}>Probability</th>
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              {customers.map((customer) => (
-
-                <tr
-                  key={customer.id}
-                  style={styles.tableRow}
-                >
-
-                  <td style={styles.td}>
-                    {customer.id}
-                  </td>
-
-                  <td style={styles.td}>
-                    {customer.tenure}
-                  </td>
-
-                  <td style={styles.td}>
-                    ₹ {customer.monthlyCharges}
-                  </td>
-
-                  <td style={styles.td}>
-                    ₹ {customer.totalCharges}
-                  </td>
-
-                  <td style={styles.td}>
-
-                    <span
-                      style={{
-                        ...styles.badge,
-                        background:
-                          customer.prediction === 1
-                            ? "#fee2e2"
-                            : "#dcfce7",
-                        color:
-                          customer.prediction === 1
-                            ? "#dc2626"
-                            : "#16a34a",
-                      }}
-                    >
-                      {customer.prediction === 1
-                        ? "High Risk"
-                        : "Low Risk"}
-                    </span>
-
-                  </td>
-
-                  <td style={styles.td}>
-                    {(customer.probability * 100).toFixed(1)}%
-                  </td>
-
-                </tr>
-
+        {loading ? (
+          <p style={styles.message}>Loading dashboard...</p>
+        ) : (
+          <>
+            <section style={styles.grid}>
+              {cards.map((card) => (
+                <article key={card.title} style={styles.card}>
+                  <p style={styles.cardTitle}>{card.title}</p>
+                  <h2 style={{ ...styles.cardValue, color: card.color }}>
+                    {card.value}
+                  </h2>
+                </article>
               ))}
+            </section>
 
-            </tbody>
+            <section style={styles.panel}>
+              <div style={styles.panelHeader}>
+                <div>
+                  <h2 style={styles.sectionTitle}>Customer Management</h2>
+                  <p style={styles.subtitle}>
+                    Add customers and evaluate their predicted churn risk.
+                  </p>
+                </div>
+                <button style={styles.refreshButton} onClick={loadDashboard}>
+                  Refresh
+                </button>
+              </div>
 
-          </table>
+              <CustomerForm onCustomerAdded={loadDashboard} />
+            </section>
 
-        </div> */}
+            <section style={styles.panel}>
+              <h2 style={styles.sectionTitle}>Customer Predictions</h2>
+              <p style={styles.subtitle}>
+                Review customer details and model-generated risk levels.
+              </p>
 
-        </div>
+              {customers.length === 0 ? (
+                <p style={styles.message}>
+                  No customers available. Add a customer above to get started.
+                </p>
+              ) : (
+                <CustomerTable customers={customers} />
+              )}
+            </section>
 
-
-
-      </>
+            <p style={styles.disclaimer}>
+              Predictions estimate churn risk; they do not confirm that a
+              customer has left.
+            </p>
+          </>
+        )}
+      </div>
+    </main>
   );
 }
 
 const styles = {
-
-  container: {
-    padding: "40px",
+  page: {
     minHeight: "100vh",
-    background: "#f3f4f6",
+    padding: "36px 24px",
+    background: "#f5f7fb",
+    color: "#111827",
+    fontFamily: "Inter, system-ui, sans-serif",
   },
-
+  container: { maxWidth: "1200px", margin: "0 auto" },
   header: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "40px",
+    alignItems: "flex-start",
     flexWrap: "wrap",
     gap: "20px",
+    marginBottom: "28px",
   },
-
+  eyebrow: {
+    color: "#4f46e5",
+    fontSize: "11px",
+    fontWeight: 700,
+    letterSpacing: "1.5px",
+  },
   heading: {
-    fontSize: "36px",
-    fontWeight: "700",
-    color: "#111827",
-    marginBottom: "10px",
+    margin: "0 0 8px",
+    fontSize: "32px",
+    fontWeight: 750,
   },
-
-  subtext: {
-    fontSize: "16px",
-    color: "#6b7280",
+  subtitle: {
+    margin: "6px 0 0",
+    color: "#64748b",
+    fontSize: "13px",
+    lineHeight: 1.7,
   },
-
-  actions: {
-    display: "flex",
-    gap: "15px",
-  },
-
-  primaryBtn: {
-    padding: "12px 22px",
-    background: "#4f46e5",
-    color: "#fff",
-    border: "none",
-    borderRadius: "10px",
-    cursor: "pointer",
-    fontWeight: "600",
-    fontSize: "15px",
-  },
-
-  secondaryBtn: {
-    padding: "12px 22px",
-    background: "#fff",
-    color: "#111827",
-    border: "1px solid #d1d5db",
-    borderRadius: "10px",
-    cursor: "pointer",
-    fontWeight: "600",
-    fontSize: "15px",
-  },
-
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-    gap: "25px",
-    marginBottom: "40px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: "16px",
+    marginBottom: "24px",
   },
-
   card: {
+    padding: "22px",
     background: "#fff",
-    padding: "28px",
-    borderRadius: "18px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+    border: "1px solid #e8edf5",
+    borderRadius: "14px",
+    boxShadow: "0 3px 12px rgba(15,23,42,.03)",
   },
-
-  cardTitle: {
-    color: "#6b7280",
-    fontSize: "15px",
-    marginBottom: "10px",
-  },
-
-  cardNumber: {
-    fontSize: "40px",
-    color: "#4f46e5",
-    fontWeight: "700",
-  },
-
-  tableContainer: {
+  cardTitle: { margin: 0, color: "#64748b", fontSize: "13px" },
+  cardValue: { margin: "12px 0 0", fontSize: "32px" },
+  panel: {
+    padding: "24px",
+    marginBottom: "22px",
     background: "#fff",
-    borderRadius: "20px",
-    padding: "25px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
-    overflowX: "auto",
+    border: "1px solid #e8edf5",
+    borderRadius: "14px",
   },
-
-  tableHeader: {
-    marginBottom: "20px",
+  panelHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    flexWrap: "wrap",
+    gap: "16px",
+    marginBottom: "22px",
   },
-
-  tableTitle: {
-    fontSize: "24px",
-    color: "#111827",
-  },
-
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-  },
-
-  tableHeadRow: {
-    background: "#f9fafb",
-  },
-
-  th: {
-    textAlign: "left",
-    padding: "16px",
-    color: "#6b7280",
-    fontWeight: "600",
-    fontSize: "14px",
-    borderBottom: "1px solid #e5e7eb",
-  },
-
-  td: {
-    padding: "18px 16px",
-    borderBottom: "1px solid #f3f4f6",
-    color: "#111827",
-    fontSize: "15px",
-  },
-
-  tableRow: {
-    transition: "0.2s",
-  },
-
-  badge: {
-    padding: "8px 14px",
-    borderRadius: "999px",
-    fontSize: "13px",
-    fontWeight: "600",
-  },
-
-  logoutBtn: {
-
-    background: "#ef4444",
-
-    color: "#ffffff",
-
-    border: "none",
-
-    padding: "14px 22px",
-
-    borderRadius: "12px",
-
+  sectionTitle: { margin: "0 0 8px", fontSize: "18px" },
+  logoutButton: {
+    padding: "10px 16px",
+    border: "1px solid #e2e8f0",
+    borderRadius: "8px",
+    background: "#fff",
     cursor: "pointer",
-
-    fontWeight: "600",
-
   },
-
+  refreshButton: {
+    padding: "9px 13px",
+    border: "1px solid #c7d2fe",
+    borderRadius: "8px",
+    background: "#eef2ff",
+    color: "#4338ca",
+    cursor: "pointer",
+  },
+  message: {
+    padding: "24px 10px",
+    color: "#64748b",
+    textAlign: "center",
+  },
+  error: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: "12px",
+    padding: "16px",
+    marginBottom: "20px",
+    background: "#fef2f2",
+    color: "#b91c1c",
+    borderRadius: "8px",
+  },
+  retryButton: {
+    padding: "6px 10px",
+    border: "1px solid #fecaca",
+    borderRadius: "6px",
+    background: "#fff",
+    cursor: "pointer",
+  },
+  disclaimer: { color: "#94a3b8", fontSize: "12px" },
 };
