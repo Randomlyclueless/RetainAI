@@ -1,478 +1,233 @@
-import React, { useEffect, useState,useRef } from "react";
+
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AICopilot from "../components/AICopilot";
-import FileUpload from "../components/FileUpload";
-import AnalyticsCharts from "../components/AnalyticsCharts";
+import axios from "axios";
 import CustomerForm from "../components/CustomerForm";
 import CustomerTable from "../components/CustomerTable";
-import AIInsights from "../components/AIInsights";
-import AIExplanationCard from "../components/AIExplanationCard";
-import axios from "axios";
+
+const API = "http://localhost:8080/customers";
 
 export default function Dashboard() {
-
   const navigate = useNavigate();
-
-  const logout = () => {
-
-    localStorage.removeItem(
-        "isLoggedIn"
-    );
-
-    localStorage.removeItem(
-        "userEmail"
-    );
-
-    navigate("/login");
-
-  };
-
   const [customers, setCustomers] = useState([]);
-
-  const highRiskCustomer =
-      customers.find(
-          (customer) =>
-              customer.prediction === 1
-      );
-
   const [stats, setStats] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const fetchCustomers = () => {
+  const fetchData = async () => {
+    try {
+      const [customerResponse, statsResponse] = await Promise.all([
+        axios.get(API),
+        axios.get(`${API}/stats`),
+      ]);
 
-    axios
-        .get("http://localhost:8080/customers")
-        .then((response) => {
-          setCustomers(response.data);
-        })
-        .catch((error) => {
-          console.log("Error fetching customers:", error);
-        });
-
-  };
-
-  const fetchStats = () => {
-
-    axios
-        .get("http://localhost:8080/customers/stats")
-        .then((response) => {
-
-          setStats(response.data);
-
-        })
-        .catch((error) => {
-
-          console.log("Error fetching stats:", error);
-
-        });
-
+      setCustomers(customerResponse.data);
+      setStats(statsResponse.data);
+      setError("");
+    } catch (err) {
+      console.error("Failed to load dashboard:", err);
+      setError(
+        "Unable to load dashboard data. Check that the backend is running."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-
-    fetchCustomers();
-    fetchStats();
-
-  }, []);
-
-  useEffect(() => {
-
-    const loggedIn =
-        localStorage.getItem(
-            "isLoggedIn"
-        );
-
-    if (!loggedIn) {
-
+    if (localStorage.getItem("isLoggedIn") !== "true") {
       navigate("/login");
-
+      return;
     }
 
+    fetchData();
   }, [navigate]);
 
-  const fileInputRef = useRef(null);
-
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
+  const logout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userEmail");
+    navigate("/login");
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-
-    if (!file) return;
-
-    console.log(file);
-  };
+  const cards = [
+    {
+      label: "Total Customers",
+      value: stats.totalCustomers ?? 0,
+      color: "#2563eb",
+    },
+    {
+      label: "Predicted Churn",
+      value: stats.highRisk ?? 0,
+      color: "#dc2626",
+    },
+    {
+      label: "Predicted Retention",
+      value: stats.lowRisk ?? 0,
+      color: "#059669",
+    },
+    {
+      label: "Churn Rate",
+      value: `${stats.churnRate ?? 0}%`,
+      color: "#7c3aed",
+    },
+  ];
 
   return (
-      <>
-
-        <div style={styles.container}>
-
-          {/* Header */}
-          <div style={styles.header}>
-
-            <div>
-              <h1 style={styles.heading}>
-                Customer Retention Dashboard
-              </h1>
-
-              <p style={styles.subtext}>
-                Monitor churn analytics and customer predictions in real-time.
-              </p>
-            </div>
-
-            <div style={styles.actions}>
-
-              <>
-                <button
-                    style={styles.primaryBtn}
-                    onClick={handleUploadClick}
-                >
-                  Upload Dataset
-                </button>
-
-                <input
-                    type="file"
-                    accept=".csv"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    style={{ display: "none" }}
-                />
-              </>
-
-              <button
-                  style={styles.secondaryBtn}
-                  onClick={() => navigate("/report")}
-              >
-                View Reports
-              </button>
-
-              <button
-                  style={styles.logoutBtn}
-                  onClick={logout}
-              >
-                Logout
-              </button>
-
-            </div>
-
-          </div>
-
-          <CustomerForm
-              refreshCustomers={() => {
-                fetchCustomers();
-                fetchStats();
-              }}
-          />
-
-          {/* Stats Cards */}
-          <div style={styles.grid}>
-
-            <div style={styles.card}>
-
-              <p style={styles.cardTitle}>Total Customers</p>
-
-              <h2 style={styles.cardNumber}>
-                {stats.totalCustomers || 0}
-              </h2>
-
-            </div>
-
-            <div style={styles.card}>
-
-              <p style={styles.cardTitle}>High Risk Customers</p>
-
-              <h2 style={styles.cardNumber}>
-                {stats.highRiskCustomers || 0}
-              </h2>
-
-            </div>
-
-            <div style={styles.card}>
-
-              <p style={styles.cardTitle}>Predictions Generated</p>
-
-              <h2 style={styles.cardNumber}>
-                {stats.totalCustomers || 0}
-              </h2>
-
-            </div>
-
-            <div style={styles.card}>
-
-              <p style={styles.cardTitle}>
-                Retention Rate
-              </p>
-
-              <h2 style={styles.cardNumber}>
-                {stats.retentionRate || 0}%
-              </h2>
-
-            </div>
-
-          </div>
-
-          <FileUpload
-              refreshCustomers={fetchCustomers}
-              refreshStats={fetchStats}
-          />
-
-          <AnalyticsCharts stats={stats} />
-
-          <AIInsights />
-
-          <AICopilot />
-
-          <CustomerTable customers={customers} />
-
-          <AIExplanationCard
-              customer={highRiskCustomer}
-          />
-
-          {/* Table */}
-          {/* <div style={styles.tableContainer}>
-
-          <div style={styles.tableHeader}>
-            <h2 style={styles.tableTitle}>
-              Customer Predictions
-            </h2>
-          </div>
-
-          <table style={styles.table}>
-
-            <thead>
-
-              <tr style={styles.tableHeadRow}>
-                <th style={styles.th}>ID</th>
-                <th style={styles.th}>Tenure</th>
-                <th style={styles.th}>Monthly Charges</th>
-                <th style={styles.th}>Total Charges</th>
-                <th style={styles.th}>Prediction</th>
-                <th style={styles.th}>Probability</th>
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              {customers.map((customer) => (
-
-                <tr
-                  key={customer.id}
-                  style={styles.tableRow}
-                >
-
-                  <td style={styles.td}>
-                    {customer.id}
-                  </td>
-
-                  <td style={styles.td}>
-                    {customer.tenure}
-                  </td>
-
-                  <td style={styles.td}>
-                    ₹ {customer.monthlyCharges}
-                  </td>
-
-                  <td style={styles.td}>
-                    ₹ {customer.totalCharges}
-                  </td>
-
-                  <td style={styles.td}>
-
-                    <span
-                      style={{
-                        ...styles.badge,
-                        background:
-                          customer.prediction === 1
-                            ? "#fee2e2"
-                            : "#dcfce7",
-                        color:
-                          customer.prediction === 1
-                            ? "#dc2626"
-                            : "#16a34a",
-                      }}
-                    >
-                      {customer.prediction === 1
-                        ? "High Risk"
-                        : "Low Risk"}
-                    </span>
-
-                  </td>
-
-                  <td style={styles.td}>
-                    {(customer.probability * 100).toFixed(1)}%
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
-
-          </table>
-
-        </div> */}
-
+    <main style={styles.page}>
+      <header style={styles.header}>
+        <div>
+          <p style={styles.eyebrow}>RETAINAI / OVERVIEW</p>
+          <h1 style={styles.title}>Customer Dashboard</h1>
+          <p style={styles.subtitle}>
+            Monitor customer churn and identify customers who may need attention.
+          </p>
         </div>
 
+        <button onClick={logout} style={styles.logout}>
+          Logout
+        </button>
+      </header>
 
+      {error && <p style={styles.error}>{error}</p>}
 
-      </>
+      <section style={styles.statsGrid}>
+        {cards.map((card) => (
+          <article key={card.label} style={styles.statCard}>
+            <p style={styles.statLabel}>{card.label}</p>
+            <h2 style={{ ...styles.statValue, color: card.color }}>
+              {loading ? "—" : card.value}
+            </h2>
+          </article>
+        ))}
+      </section>
+
+      <section style={styles.section}>
+        <CustomerForm refreshCustomers={fetchData} />
+      </section>
+
+      <section style={styles.section}>
+        <div style={styles.sectionHeader}>
+          <div>
+            <h2 style={styles.sectionTitle}>Customers</h2>
+            <p style={styles.sectionSubtitle}>
+              Saved customer predictions and risk assessments.
+            </p>
+          </div>
+
+          <span style={styles.count}>
+            {customers.length} customers
+          </span>
+        </div>
+
+        {loading ? (
+          <p style={styles.message}>Loading customers...</p>
+        ) : (
+          <CustomerTable customers={customers} />
+        )}
+      </section>
+    </main>
   );
 }
 
 const styles = {
-
-  container: {
-    padding: "40px",
+  page: {
     minHeight: "100vh",
-    background: "#f3f4f6",
+    padding: "32px clamp(16px, 4vw, 48px)",
+    background: "#f5f7fb",
+    color: "#172033",
+    fontFamily: "Arial, sans-serif",
   },
-
   header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "40px",
-    flexWrap: "wrap",
     gap: "20px",
+    flexWrap: "wrap",
+    marginBottom: "28px",
   },
-
-  heading: {
-    fontSize: "36px",
-    fontWeight: "700",
-    color: "#111827",
-    marginBottom: "10px",
+  eyebrow: {
+    color: "#64748b",
+    fontSize: "12px",
+    fontWeight: 700,
+    letterSpacing: "1.5px",
   },
-
-  subtext: {
-    fontSize: "16px",
-    color: "#6b7280",
+  title: {
+    fontSize: "clamp(26px, 4vw, 34px)",
+    margin: "8px 0",
   },
-
-  actions: {
-    display: "flex",
-    gap: "15px",
+  subtitle: {
+    color: "#64748b",
+    margin: 0,
+    lineHeight: 1.6,
   },
-
-  primaryBtn: {
-    padding: "12px 22px",
-    background: "#4f46e5",
-    color: "#fff",
-    border: "none",
-    borderRadius: "10px",
-    cursor: "pointer",
-    fontWeight: "600",
-    fontSize: "15px",
-  },
-
-  secondaryBtn: {
-    padding: "12px 22px",
+  logout: {
+    padding: "10px 18px",
     background: "#fff",
-    color: "#111827",
-    border: "1px solid #d1d5db",
-    borderRadius: "10px",
+    color: "#334155",
+    border: "1px solid #dbe2ea",
+    borderRadius: "9px",
     cursor: "pointer",
-    fontWeight: "600",
-    fontSize: "15px",
+    fontWeight: 600,
   },
-
-  grid: {
+  statsGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-    gap: "25px",
-    marginBottom: "40px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+    gap: "18px",
+    marginBottom: "28px",
   },
-
-  card: {
+  statCard: {
     background: "#fff",
-    padding: "28px",
-    borderRadius: "18px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+    padding: "22px",
+    border: "1px solid #e8edf4",
+    borderRadius: "14px",
+    boxShadow: "0 3px 12px rgba(15, 23, 42, 0.03)",
   },
-
-  cardTitle: {
-    color: "#6b7280",
-    fontSize: "15px",
-    marginBottom: "10px",
-  },
-
-  cardNumber: {
-    fontSize: "40px",
-    color: "#4f46e5",
-    fontWeight: "700",
-  },
-
-  tableContainer: {
-    background: "#fff",
-    borderRadius: "20px",
-    padding: "25px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
-    overflowX: "auto",
-  },
-
-  tableHeader: {
-    marginBottom: "20px",
-  },
-
-  tableTitle: {
-    fontSize: "24px",
-    color: "#111827",
-  },
-
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-  },
-
-  tableHeadRow: {
-    background: "#f9fafb",
-  },
-
-  th: {
-    textAlign: "left",
-    padding: "16px",
-    color: "#6b7280",
-    fontWeight: "600",
+  statLabel: {
+    color: "#64748b",
     fontSize: "14px",
-    borderBottom: "1px solid #e5e7eb",
+    margin: 0,
   },
-
-  td: {
-    padding: "18px 16px",
-    borderBottom: "1px solid #f3f4f6",
-    color: "#111827",
-    fontSize: "15px",
+  statValue: {
+    fontSize: "32px",
+    margin: "14px 0 0",
   },
-
-  tableRow: {
-    transition: "0.2s",
+  section: {
+    marginBottom: "26px",
   },
-
-  badge: {
-    padding: "8px 14px",
-    borderRadius: "999px",
+  sectionHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "12px",
+    flexWrap: "wrap",
+    marginBottom: "16px",
+  },
+  sectionTitle: {
+    margin: "0 0 6px",
+    fontSize: "22px",
+  },
+  sectionSubtitle: {
+    margin: 0,
+    color: "#64748b",
+    fontSize: "14px",
+  },
+  count: {
+    color: "#475569",
+    background: "#e8eef7",
+    padding: "7px 12px",
+    borderRadius: "20px",
     fontSize: "13px",
-    fontWeight: "600",
   },
-
-  logoutBtn: {
-
-    background: "#ef4444",
-
-    color: "#ffffff",
-
-    border: "none",
-
-    padding: "14px 22px",
-
+  error: {
+    padding: "12px 16px",
+    background: "#fef2f2",
+    color: "#b91c1c",
+    borderRadius: "8px",
+  },
+  message: {
+    padding: "24px",
+    background: "#fff",
     borderRadius: "12px",
-
-    cursor: "pointer",
-
-    fontWeight: "600",
-
+    color: "#64748b",
   },
-
 };

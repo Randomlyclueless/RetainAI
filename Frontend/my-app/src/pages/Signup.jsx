@@ -1,172 +1,145 @@
+
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/SignUp.css";
-import signup_growthimg from "../assets/signup_growthimg.png";
 
 export default function SignUp() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     company: "",
-    type: "",
-    role: "",
-    regId: "",
   });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    setForm((previous) => ({ ...previous, [id]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", form);
-    // TODO: Add actual signup logic later
+
+    // UI-only signup for the current project demo.
+    // This does not create an account in the backend.
+    localStorage.setItem("userEmail", form.email.trim());
+    localStorage.setItem("isLoggedIn", "true");
+
+    navigate("/dashboard");
   };
 
   return (
-      <main className="main">
-        <div className="layout">
-          {/* Branding Side */}
-          <div className="branding">
-            <h1 className="branding__headline">
-              Experience the future of{" "}
-              <span className="branding__accent">customer retention</span>.
-            </h1>
-            <p className="branding__subtext">
-              Join thousands of industry-leading companies using RetainAI to
-              predict churn, automate engagement, and scale growth through
-              intelligent insights.
-            </p>
-            <div className="branding__image-wrap">
-              <img
-                  className="branding__image"
-                  src={signup_growthimg}
-                  alt="growth illustration"
-              />
-            </div>
-          </div>
+    <main className="main">
+      <div className="layout">
+        <section className="branding">
+          <h1 className="branding__headline">
+            Keep your customers.
+            <br />
+            <span className="branding__accent">
+              Predict what comes next.
+            </span>
+          </h1>
 
-          {/* Sign Up Form */}
-          <div className="form-container">
-            <div className="form-card">
-              <div className="form-card__header">
-                <h2 className="form-card__title">Create your account</h2>
-                <p className="form-card__subtitle">Start your 14-day free trial today.</p>
+          <p className="branding__subtext">
+            Turn customer data into churn predictions and actionable
+            retention insights with RetainAI.
+          </p>
+        </section>
+
+        <section className="form-container">
+          <div className="form-card">
+            <header className="form-card__header">
+              <h2 className="form-card__title">Create your account</h2>
+              <p className="form-card__subtitle">
+                Get started with RetainAI.
+              </p>
+            </header>
+
+            <form className="form" onSubmit={handleSubmit}>
+              <div className="form__field">
+                <label className="form__label" htmlFor="name">
+                  Full name
+                </label>
+
+                <input
+                  className="form__input"
+                  id="name"
+                  type="text"
+                  placeholder="Your full name"
+                  value={form.name}
+                  onChange={handleChange}
+                  autoComplete="name"
+                  required
+                />
               </div>
 
-              <form className="form" onSubmit={handleSubmit}>
-                <div className="form__row">
-                  <div className="form__field">
-                    <label className="form__label" htmlFor="name">Full Name</label>
-                    <input
-                        className="form__input"
-                        id="name"
-                        type="text"
-                        placeholder="John Doe"
-                        value={form.name}
-                        onChange={handleChange}
-                    />
-                  </div>
+              <div className="form__field">
+                <label className="form__label" htmlFor="email">
+                  Work email
+                </label>
 
-                  <div className="form__field">
-                    <label className="form__label" htmlFor="email">Work Email</label>
-                    <input
-                        className="form__input"
-                        id="email"
-                        type="email"
-                        placeholder="name@company.com"
-                        value={form.email}
-                        onChange={handleChange}
-                    />
-                  </div>
-                </div>
+                <input
+                  className="form__input"
+                  id="email"
+                  type="email"
+                  placeholder="you@company.com"
+                  value={form.email}
+                  onChange={handleChange}
+                  autoComplete="email"
+                  required
+                />
+              </div>
 
-                <div className="form__field">
-                  <label className="form__label" htmlFor="password">Password</label>
-                  <input
-                      className="form__input"
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={form.password}
-                      onChange={handleChange}
-                  />
-                </div>
+              <div className="form__field">
+                <label className="form__label" htmlFor="company">
+                  Company name
+                </label>
 
-                <div className="form__field">
-                  <label className="form__label" htmlFor="company">Company Name</label>
-                  <input
-                      className="form__input"
-                      id="company"
-                      type="text"
-                      placeholder="Acme Inc."
-                      value={form.company}
-                      onChange={handleChange}
-                  />
-                </div>
+                <input
+                  className="form__input"
+                  id="company"
+                  type="text"
+                  placeholder="Your company"
+                  value={form.company}
+                  onChange={handleChange}
+                  autoComplete="organization"
+                  required
+                />
+              </div>
 
-                <div className="form__row">
-                  <div className="form__field">
-                    <label className="form__label" htmlFor="type">Company Type</label>
-                    <select
-                        className="form__input form__select"
-                        id="type"
-                        value={form.type}
-                        onChange={handleChange}
-                    >
-                      <option value="" disabled>Select type</option>
-                      <option>Enterprise</option>
-                      <option>Mid-Market</option>
-                      <option>SME</option>
-                      <option>Startup</option>
-                    </select>
-                  </div>
+              <div className="form__field">
+                <label className="form__label" htmlFor="password">
+                  Password
+                </label>
 
-                  <div className="form__field">
-                    <label className="form__label" htmlFor="role">User Role</label>
-                    <select
-                        className="form__input form__select"
-                        id="role"
-                        value={form.role}
-                        onChange={handleChange}
-                    >
-                      <option value="" disabled>Select role</option>
-                      <option>Executive</option>
-                      <option>Operations</option>
-                      <option>Product</option>
-                      <option>Success Manager</option>
-                    </select>
-                  </div>
-                </div>
+                <input
+                  className="form__input"
+                  id="password"
+                  type="password"
+                  placeholder="Create a password"
+                  value={form.password}
+                  onChange={handleChange}
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                />
+              </div>
 
-                <div className="form__field">
-                  <label className="form__label" htmlFor="regId">Company Registration ID</label>
-                  <input
-                      className="form__input"
-                      id="regId"
-                      type="text"
-                      placeholder="REG-123456789"
-                      value={form.regId}
-                      onChange={handleChange}
-                  />
-                </div>
+              <button className="form__submit" type="submit">
+                Create account
+              </button>
+            </form>
 
-                <button className="form__submit" type="submit">
-                  Create Account
-                </button>
-              </form>
-
-              {/* Login Link */}
-              <p className="form-card__footer">
-                Already have an account?{" "}
-                <Link to="/login" className="form-card__login-link">
-                  Log in
-                </Link>
-              </p>
-            </div>
+            <footer className="form-card__footer">
+              Already have an account?{" "}
+              <Link to="/login" className="form-card__login-link">
+                Sign in
+              </Link>
+            </footer>
           </div>
-        </div>
-      </main>
+        </section>
+      </div>
+    </main>
   );
 }

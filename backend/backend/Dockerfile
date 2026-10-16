@@ -6,6 +6,7 @@ COPY . .
 
 RUN chmod +x mvnw
 
+RUN mkdir -p /root/.m2 && chmod -R 777 /root/.m2
 RUN ./mvnw clean package -DskipTests
 
 EXPOSE 8080

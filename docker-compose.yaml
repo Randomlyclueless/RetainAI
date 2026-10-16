@@ -1,7 +1,5 @@
 
-
 services:
-
   frontend:
     build:
       context: ./Frontend/my-app
@@ -24,20 +22,19 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      ml-service:
+        condition: service_started
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/churn_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      ML_SERVICE_URL: http://ml-service:8001/predict
 
-  agent:
+  ml-service:
     build:
-      context: ./agent
-      dockerfile: ../Dockerfile.agent
-    container_name: retainai-agent
-    ports:
-      - "5000:5000"
-    depends_on:
-      - backend
+      context: ./ml-service
+    container_name: retainai-ml-service
+    restart: unless-stopped
 
   mysql:
     image: mysql:8.0

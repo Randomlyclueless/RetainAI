@@ -1,58 +1,41 @@
+
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <header style={styles.navbar}>
       <nav style={styles.inner}>
+        <button
+          style={styles.logo}
+          onClick={() => navigate("/")}
+          aria-label="RetainAI home"
+        >
+          RetainAI
+        </button>
 
-        {/* LEFT */}
-        <div style={styles.left}>
-          <span style={styles.logo} onClick={() => navigate("/")}>
-            RetainAI
-          </span>
-
-          <div style={styles.links}>
-            <span
-              style={styles.activeLink}
-              onClick={() => navigate("/features")}
-            >Features </span>
-            <span
-              style={styles.activeLink}
-              onClick={() => navigate("/working")}
+        <div style={styles.actions}>
+          {location.pathname !== "/login" && (
+            <button
+              style={styles.loginBtn}
+              onClick={() => navigate("/login")}
             >
-              How it Works
-            </span>
-            <span
-              style={styles.activeLink}
-              onClick={() => navigate("/pricing")}
-            >Pricing </span>
-            <span
-              style={styles.activeLink}
-              onClick={() => navigate("/resources")}
-            >Resources </span>
-          </div>
+              Log in
+            </button>
+          )}
+
+          {location.pathname !== "/signup" && (
+            <button
+              style={styles.signupBtn}
+              onClick={() => navigate("/signup")}
+            >
+              Get started
+            </button>
+          )}
         </div>
-
-        {/* RIGHT */}
-        <div style={styles.right}>
-          <button
-            style={styles.loginBtn}
-            onClick={() => navigate("/login")}
-          >
-            Log In
-          </button>
-
-          <button
-            style={styles.ctaBtn}
-            onClick={() => navigate("/signup")}
-          >
-            Get Started
-          </button>
-        </div>
-
       </nav>
     </header>
   );
@@ -61,71 +44,50 @@ export default function Navbar() {
 const styles = {
   navbar: {
     width: "100%",
-    padding: "30px 40px",
-    background: "#ffffff",   // ✅ white background
-    borderBottom: "1px solid #e5e7eb", // subtle border
+    padding: "0 24px",
+    background: "#ffffff",
+    borderBottom: "1px solid #e5e7eb",
   },
-
   inner: {
+    maxWidth: "1200px",
+    minHeight: "68px",
+    margin: "0 auto",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    gap: "16px",
   },
-
-  left: {
+  logo: {
+    border: "none",
+    background: "transparent",
+    color: "#4f46e5",
+    fontSize: "22px",
+    fontWeight: "750",
+    cursor: "pointer",
+  },
+  actions: {
     display: "flex",
     alignItems: "center",
-    gap: "30px",
-  },
-
-  logo: {
-    fontSize: "20px",
-    fontWeight: "600",
-    color: "#4f46e5",  // ✅ purple like your image
-    cursor: "pointer",
-  },
-
-  links: {
-    display: "flex",
-    gap: "20px",
-  },
-
-  link: {
-    fontSize: "14px",
-    color: "#6b7280", // gray
-    cursor: "pointer",
-  },
-
-  activeLink: {
-    fontSize: "14px",
-    color: "#4f46e5", // active = purple
-    fontWeight: "500",
-    borderBottom: "2px solid #4f46e5",
-    paddingBottom: "2px",
-    cursor: "pointer",
-  },
-
-  right: {
-    display: "flex",
     gap: "12px",
   },
-
   loginBtn: {
-    padding: "8px 14px",
-    border: "1px solid #d1d5db",
+    padding: "10px 16px",
+    border: "1px solid #e2e8f0",
+    borderRadius: "9px",
     background: "#ffffff",
-    color: "#111827",
-    borderRadius: "6px",
+    color: "#334155",
+    fontSize: "14px",
+    fontWeight: "600",
     cursor: "pointer",
   },
-
-  ctaBtn: {
-    padding: "8px 14px",
+  signupBtn: {
+    padding: "10px 16px",
+    border: "1px solid #4f46e5",
+    borderRadius: "9px",
     background: "#4f46e5",
     color: "#ffffff",
-    border: "none",
-    borderRadius: "6px",
+    fontSize: "14px",
+    fontWeight: "600",
     cursor: "pointer",
-    fontWeight: "500",
   },
 };

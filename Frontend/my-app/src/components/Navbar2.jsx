@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -5,54 +6,65 @@ export default function Navbar2({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  return (
-      <>
-        <header style={styles.navbar}>
-          <nav style={styles.inner}>
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userEmail");
+    navigate("/login");
+  };
 
-            {/* LEFT */}
-            <div style={styles.left}>
-            <span style={styles.logo} onClick={() => navigate("/dashboard")}>
+  return (
+    <>
+      <header style={styles.navbar}>
+        <nav style={styles.inner}>
+          <div style={styles.left}>
+            <span
+              style={styles.logo}
+              onClick={() => navigate("/dashboard")}
+            >
               RetainAI
             </span>
 
-              <div style={styles.links}>
+            <div style={styles.links}>
               <span
-                  style={location.pathname === "/dashboard" ? styles.activeLink : styles.link}
-                  onClick={() => navigate("/dashboard")}
+                style={
+                  location.pathname === "/dashboard"
+                    ? styles.activeLink
+                    : styles.link
+                }
+                onClick={() => navigate("/dashboard")}
               >
                 Dashboard
               </span>
 
-                <span
-                    style={location.pathname === "/report" ? styles.activeLink : styles.link}
-                    onClick={() => navigate("/report")}
-                >
+              <span
+                style={
+                  location.pathname === "/report"
+                    ? styles.activeLink
+                    : styles.link
+                }
+                onClick={() => navigate("/report")}
+              >
                 Report
               </span>
-              </div>
             </div>
+          </div>
 
-            {/* RIGHT */}
-            <div style={styles.right}>
-              <div style={styles.profileWrap} onClick={() => navigate("/profile")}>
-                <div style={styles.avatar}>U</div>
-                <span style={styles.profileLabel}>My Profile</span>
-              </div>
-            </div>
+          <button style={styles.logoutBtn} onClick={handleLogout}>
+            Log out
+          </button>
+        </nav>
+      </header>
 
-          </nav>
-        </header>
-
-        <main>{children}</main>
-      </>
+      <main>{children}</main>
+    </>
   );
 }
 
 const styles = {
   navbar: {
     width: "100%",
-    padding: "30px 40px",
+    padding: "18px 32px",
+    boxSizing: "border-box",
     background: "#ffffff",
     borderBottom: "1px solid #e5e7eb",
   },
@@ -60,21 +72,23 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    gap: "20px",
   },
   left: {
     display: "flex",
     alignItems: "center",
-    gap: "30px",
+    gap: "32px",
   },
   logo: {
-    fontSize: "20px",
-    fontWeight: "600",
+    fontSize: "21px",
+    fontWeight: "700",
     color: "#4f46e5",
     cursor: "pointer",
   },
   links: {
     display: "flex",
-    gap: "20px",
+    alignItems: "center",
+    gap: "24px",
   },
   link: {
     fontSize: "14px",
@@ -84,41 +98,19 @@ const styles = {
   activeLink: {
     fontSize: "14px",
     color: "#4f46e5",
-    fontWeight: "500",
-    borderBottom: "2px solid #4f46e5",
-    paddingBottom: "2px",
-    cursor: "pointer",
-  },
-  right: {
-    display: "flex",
-    gap: "12px",
-  },
-  profileWrap: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    cursor: "pointer",
-    padding: "6px 12px",
-    borderRadius: "6px",
-    border: "1px solid #e5e7eb",
-    background: "#ffffff",
-    transition: "background 0.2s",
-  },
-  avatar: {
-    width: "28px",
-    height: "28px",
-    borderRadius: "50%",
-    background: "#4f46e5",
-    color: "#ffffff",
-    fontSize: "13px",
     fontWeight: "600",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    borderBottom: "2px solid #4f46e5",
+    paddingBottom: "5px",
+    cursor: "pointer",
   },
-  profileLabel: {
+  logoutBtn: {
+    padding: "9px 16px",
+    border: "1px solid #d1d5db",
+    borderRadius: "8px",
+    background: "#ffffff",
+    color: "#374151",
     fontSize: "14px",
-    color: "#111827",
     fontWeight: "500",
+    cursor: "pointer",
   },
 };
