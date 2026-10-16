@@ -29,6 +29,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       ML_SERVICE_URL: http://ml-service:8001/predict
+      GEMINI_API_KEY: "${GEMINI_API_KEY}"
 
   ml-service:
     build:
