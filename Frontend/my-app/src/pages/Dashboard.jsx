@@ -1,130 +1,164 @@
 
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useCallback, useEffect, useState } from "react";
 import CustomerForm from "../components/CustomerForm";
 import CustomerTable from "../components/CustomerTable";
 
-const API = "http://localhost:8080/customers";
+const API_URL = "http://localhost:8080";
 
 export default function Dashboard() {
-  const navigate = useNavigate();
   const [customers, setCustomers] = useState([]);
-  const [stats, setStats] = useState({});
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchData = async () => {
+  const loadDashboard = useCallback(async () => {
+    setError("");
+
     try {
-      const [customerResponse, statsResponse] = await Promise.all([
-        axios.get(API),
-        axios.get(`${API}/stats`),
+      const [customersResponse, statsResponse] = await Promise.all([
+        fetch(`${API_URL}/customers`),
+        fetch(`${API_URL}/customers/stats`),
       ]);
 
-      setCustomers(customerResponse.data);
-      setStats(statsResponse.data);
-      setError("");
+      if (!customersResponse.ok || !statsResponse.ok) {
+        throw new Error("Could not load dashboard data.");
+      }
+
+      const [customerData, statsData] = await Promise.all([
+        customersResponse.json(),
+        statsResponse.json(),
+      ]);
+
+      if (!Array.isArray(customerData)) {
+        throw new Error("Unexpected customer data returned by the API.");
+      }
+
+      setCustomers(customerData);
+      setStats(statsData);
     } catch (err) {
-      console.error("Failed to load dashboard:", err);
-      setError(
-        "Unable to load dashboard data. Check that the backend is running."
-      );
+      setError(err.message || "Unable to connect to the backend.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (localStorage.getItem("isLoggedIn") !== "true") {
-      navigate("/login");
-      return;
-    }
-
-    fetchData();
-  }, [navigate]);
+    loadDashboard();
+  }, [loadDashboard]);
 
   const logout = () => {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userEmail");
-    navigate("/login");
+    window.location.href = "/login";
   };
 
   const cards = [
     {
-      label: "Total Customers",
-      value: stats.totalCustomers ?? 0,
-      color: "#2563eb",
+      title: "Total Customers",
+      value: stats?.totalCustomers ?? customers.length,
+      color: "#4f46e5",
     },
     {
-      label: "Predicted Churn",
-      value: stats.highRisk ?? 0,
+      title: "Predicted Churn",
+      value: stats?.highRisk ?? customers.filter(
+        (c) => Number(c.prediction) === 1
+      ).length,
       color: "#dc2626",
     },
     {
-      label: "Predicted Retention",
-      value: stats.lowRisk ?? 0,
-      color: "#059669",
+      title: "High Risk",
+      value: customers.filter(
+        (c) => String(c.riskLevel).toUpperCase() === "HIGH"
+      ).length,
+      color: "#d97706",
     },
     {
-      label: "Churn Rate",
-      value: `${stats.churnRate ?? 0}%`,
-      color: "#7c3aed",
+      title: "Predicted Retention",
+      value: stats?.lowRisk ?? customers.filter(
+        (c) => Number(c.prediction) === 0
+      ).length,
+      color: "#059669",
     },
   ];
 
   return (
     <main style={styles.page}>
-      <header style={styles.header}>
-        <div>
-          <p style={styles.eyebrow}>RETAINAI / OVERVIEW</p>
-          <h1 style={styles.title}>Customer Dashboard</h1>
-          <p style={styles.subtitle}>
-            Monitor customer churn and identify customers who may need attention.
-          </p>
-        </div>
-
-        <button onClick={logout} style={styles.logout}>
-          Logout
-        </button>
-      </header>
-
-      {error && <p style={styles.error}>{error}</p>}
-
-      <section style={styles.statsGrid}>
-        {cards.map((card) => (
-          <article key={card.label} style={styles.statCard}>
-            <p style={styles.statLabel}>{card.label}</p>
-            <h2 style={{ ...styles.statValue, color: card.color }}>
-              {loading ? "—" : card.value}
-            </h2>
-          </article>
-        ))}
-      </section>
-
-      <section style={styles.section}>
-        <CustomerForm refreshCustomers={fetchData} />
-      </section>
-
-      <section style={styles.section}>
-        <div style={styles.sectionHeader}>
+      <div style={styles.container}>
+        <header style={styles.header}>
           <div>
-            <h2 style={styles.sectionTitle}>Customers</h2>
-            <p style={styles.sectionSubtitle}>
-              Saved customer predictions and risk assessments.
+            <p style={styles.eyebrow}>RETAINAI ANALYTICS</p>
+            <h1 style={styles.heading}>Dashboard</h1>
+            <p style={styles.subtitle}>
+              Monitor customer churn predictions and identify customers
+              who may need attention.
             </p>
           </div>
 
-          <span style={styles.count}>
-            {customers.length} customers
-          </span>
-        </div>
+
+        </header>
+
+        {error && (
+          <div role="alert" style={styles.error}>
+            {error}
+            <button onClick={loadDashboard} style={styles.retryButton}>
+              Retry
+            </button>
+          </div>
+        )}
 
         {loading ? (
-          <p style={styles.message}>Loading customers...</p>
+          <p style={styles.message}>Loading dashboard...</p>
         ) : (
-          <CustomerTable customers={customers} />
+          <>
+            <section style={styles.grid}>
+              {cards.map((card) => (
+                <article key={card.title} style={styles.card}>
+                  <p style={styles.cardTitle}>{card.title}</p>
+                  <h2 style={{ ...styles.cardValue, color: card.color }}>
+                    {card.value}
+                  </h2>
+                </article>
+              ))}
+            </section>
+
+            <section style={styles.panel}>
+              <div style={styles.panelHeader}>
+                <div>
+                  <h2 style={styles.sectionTitle}>Customer Management</h2>
+                  <p style={styles.subtitle}>
+                    Add customers and evaluate their predicted churn risk.
+                  </p>
+                </div>
+                <button style={styles.refreshButton} onClick={loadDashboard}>
+                  Refresh
+                </button>
+              </div>
+
+              <CustomerForm onCustomerAdded={loadDashboard} />
+            </section>
+
+            <section style={styles.panel}>
+              <h2 style={styles.sectionTitle}>Customer Predictions</h2>
+              <p style={styles.subtitle}>
+                Review customer details and model-generated risk levels.
+              </p>
+
+              {customers.length === 0 ? (
+                <p style={styles.message}>
+                  No customers available. Add a customer above to get started.
+                </p>
+              ) : (
+                <CustomerTable customers={customers} />
+              )}
+            </section>
+
+            <p style={styles.disclaimer}>
+              Predictions estimate churn risk; they do not confirm that a
+              customer has left.
+            </p>
+          </>
         )}
-      </section>
+      </div>
     </main>
   );
 }
@@ -132,102 +166,104 @@ export default function Dashboard() {
 const styles = {
   page: {
     minHeight: "100vh",
-    padding: "32px clamp(16px, 4vw, 48px)",
+    padding: "36px 24px",
     background: "#f5f7fb",
-    color: "#172033",
-    fontFamily: "Arial, sans-serif",
+    color: "#111827",
+    fontFamily: "Inter, system-ui, sans-serif",
   },
+  container: { maxWidth: "1200px", margin: "0 auto" },
   header: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
-    gap: "20px",
+    alignItems: "flex-start",
     flexWrap: "wrap",
+    gap: "20px",
     marginBottom: "28px",
   },
   eyebrow: {
-    color: "#64748b",
-    fontSize: "12px",
+    color: "#4f46e5",
+    fontSize: "11px",
     fontWeight: 700,
     letterSpacing: "1.5px",
   },
-  title: {
-    fontSize: "clamp(26px, 4vw, 34px)",
-    margin: "8px 0",
+  heading: {
+    margin: "0 0 8px",
+    fontSize: "32px",
+    fontWeight: 750,
   },
   subtitle: {
+    margin: "6px 0 0",
     color: "#64748b",
-    margin: 0,
-    lineHeight: 1.6,
-  },
-  logout: {
-    padding: "10px 18px",
-    background: "#fff",
-    color: "#334155",
-    border: "1px solid #dbe2ea",
-    borderRadius: "9px",
-    cursor: "pointer",
-    fontWeight: 600,
-  },
-  statsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
-    gap: "18px",
-    marginBottom: "28px",
-  },
-  statCard: {
-    background: "#fff",
-    padding: "22px",
-    border: "1px solid #e8edf4",
-    borderRadius: "14px",
-    boxShadow: "0 3px 12px rgba(15, 23, 42, 0.03)",
-  },
-  statLabel: {
-    color: "#64748b",
-    fontSize: "14px",
-    margin: 0,
-  },
-  statValue: {
-    fontSize: "32px",
-    margin: "14px 0 0",
-  },
-  section: {
-    marginBottom: "26px",
-  },
-  sectionHeader: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "12px",
-    flexWrap: "wrap",
-    marginBottom: "16px",
-  },
-  sectionTitle: {
-    margin: "0 0 6px",
-    fontSize: "22px",
-  },
-  sectionSubtitle: {
-    margin: 0,
-    color: "#64748b",
-    fontSize: "14px",
-  },
-  count: {
-    color: "#475569",
-    background: "#e8eef7",
-    padding: "7px 12px",
-    borderRadius: "20px",
     fontSize: "13px",
+    lineHeight: 1.7,
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: "16px",
+    marginBottom: "24px",
+  },
+  card: {
+    padding: "22px",
+    background: "#fff",
+    border: "1px solid #e8edf5",
+    borderRadius: "14px",
+    boxShadow: "0 3px 12px rgba(15,23,42,.03)",
+  },
+  cardTitle: { margin: 0, color: "#64748b", fontSize: "13px" },
+  cardValue: { margin: "12px 0 0", fontSize: "32px" },
+  panel: {
+    padding: "24px",
+    marginBottom: "22px",
+    background: "#fff",
+    border: "1px solid #e8edf5",
+    borderRadius: "14px",
+  },
+  panelHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    flexWrap: "wrap",
+    gap: "16px",
+    marginBottom: "22px",
+  },
+  sectionTitle: { margin: "0 0 8px", fontSize: "18px" },
+  logoutButton: {
+    padding: "10px 16px",
+    border: "1px solid #e2e8f0",
+    borderRadius: "8px",
+    background: "#fff",
+    cursor: "pointer",
+  },
+  refreshButton: {
+    padding: "9px 13px",
+    border: "1px solid #c7d2fe",
+    borderRadius: "8px",
+    background: "#eef2ff",
+    color: "#4338ca",
+    cursor: "pointer",
+  },
+  message: {
+    padding: "24px 10px",
+    color: "#64748b",
+    textAlign: "center",
   },
   error: {
-    padding: "12px 16px",
+    display: "flex",
+    justifyContent: "space-between",
+    gap: "12px",
+    padding: "16px",
+    marginBottom: "20px",
     background: "#fef2f2",
     color: "#b91c1c",
     borderRadius: "8px",
   },
-  message: {
-    padding: "24px",
+  retryButton: {
+    padding: "6px 10px",
+    border: "1px solid #fecaca",
+    borderRadius: "6px",
     background: "#fff",
-    borderRadius: "12px",
-    color: "#64748b",
+    cursor: "pointer",
   },
+  disclaimer: { color: "#94a3b8", fontSize: "12px" },
 };
